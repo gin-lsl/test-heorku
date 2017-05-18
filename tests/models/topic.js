@@ -50,4 +50,4 @@ Topic.find((err, topics) => {
         ],
         postDateTime: new Date()
     }).save()
-});
+})

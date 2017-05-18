@@ -10,4 +10,4 @@ var ChildModel = mongoose.model('Child', ChildSchema)
 
 module.exports.ChildModel = ChildModel
 
-module.exports.ChildSchema = ChildSchema;
+module.exports.ChildSchema = ChildSchema

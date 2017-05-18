@@ -71,4 +71,4 @@ module.exports.createNewUserPromise = (email, password) => {
         lastLoginDateTime: now,
         salt: salt,
     })
-};
+}

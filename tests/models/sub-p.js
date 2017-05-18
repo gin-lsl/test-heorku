@@ -13,4 +13,4 @@ var p = new PModel({
     ]
 })
 
-p.save();
+p.save()

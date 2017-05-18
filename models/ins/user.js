@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
 
 var UserSchema = new mongoose.Schema({
     email: String,
@@ -11,17 +11,17 @@ var UserSchema = new mongoose.Schema({
     logonDateTime: Date,
     lastLoginDateTime: Date,
     salt: String,
-});
+})
 
 // UserSchema.statics.findOneByEmailAndPassword = (email, password, callback) => {
-//     findOne({ email: email, password: password }, callback);
+//     findOne({ email: email, password: password }, callback)
 // }
 
-var UserModel = mongoose.model('User', UserSchema);
+var UserModel = mongoose.model('User', UserSchema)
 
-UserModel.findOneByEmailAndPassword = (email, password, callback) => UserModel.findOne({ email: email, password: password }, callback);
+UserModel.findOneByEmailAndPassword = (email, password, callback) => UserModel.findOne({ email: email, password: password }, callback)
 
-UserModel.findOneByEmail = (email, callback) => UserModel.findOne({ email: email }, callback);
+UserModel.findOneByEmail = (email, callback) => UserModel.findOne({ email: email }, callback)
 
 /**
  * 添加一个用户
@@ -30,6 +30,6 @@ UserModel.findOneByEmail = (email, callback) => UserModel.findOne({ email: email
  * @param {String} password
  * @return {Promise<any>}
  */
-UserModel.createNewUserPromise = (email, password) => UserModel.create({ email: email, password: password });
+UserModel.createNewUserPromise = (email, password) => UserModel.create({ email: email, password: password })
 
-module.exports = UserModel;
+module.exports = UserModel

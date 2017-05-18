@@ -17,4 +17,4 @@ router.get('/list', topic.list)
 
 router.get('/:tid', topic.findById)
 
-module.exports = router;
+module.exports = router

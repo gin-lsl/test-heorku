@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const ReplySchema = mongoose.Schema({
     // 回复内容
@@ -17,13 +17,13 @@ const ReplySchema = mongoose.Schema({
     ups: [ObjectId],
     // 反对数量
     downs: [ObjectId],
-});
+})
 
-const ReplyModel = mongoose.model('reply', ReplySchema);
+const ReplyModel = mongoose.model('reply', ReplySchema)
 
 /**
  * 获取某个topic的回复列表
  */
-ReplyModel.findRepliesByTopicId = (topicId, callback) => ReplyModel.find({ topicId: topicId }, callback);
+ReplyModel.findRepliesByTopicId = (topicId, callback) => ReplyModel.find({ topicId: topicId }, callback)
 
-module.exports = ReplyModel;
+module.exports = ReplyModel

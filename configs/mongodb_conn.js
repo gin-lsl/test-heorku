@@ -28,4 +28,4 @@ module.exports = function () {
             debug('没有环境变量')
             throw new Error('不知道的执行环境, 请重新设置环境变量!')
     }
-};
+}

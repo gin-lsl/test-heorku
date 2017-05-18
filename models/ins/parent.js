@@ -8,4 +8,4 @@ var ParentSchema = mongoose.Schema({
 
 var ParentModel = mongoose.model('Parent', ParentSchema)
 
-module.exports = ParentModel;
+module.exports = ParentModel
