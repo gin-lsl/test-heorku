@@ -1,0 +1,157 @@
+.post_time {
+  font-size: 0.9em;
+}
+
+main.site-main {
+  background-color: #F5F5F5;
+  padding: 20px 0;
+}
+
+article.post {
+  display: flex;
+  margin: 20px;
+  background-color: #FFFFFF;
+}
+
+figure.entry-cover-image {
+  flex-grow: 0;
+  display: inline-block;
+  margin: 0;
+  width: 200px;
+  height: 150px;
+}
+
+figure.entry-cover-image img {
+  width: 200px;
+  height: 150px;
+}
+
+.entry-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin: 5px 20px;
+}
+
+.entry-info header {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.entry-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+.archive-content {
+  flex-grow: 1;
+  color: #808080;
+}
+
+.entry-meta {
+  color: #9E9E9E;
+}
+
+.entry-meta span {
+  margin-right: 10px;
+}
+
+.entry-more {
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  position: relative;
+  right: -30px;
+}
+
+.deepskyblue-box {
+  background-color: deepskyblue;
+  color: white;
+  text-align: center;
+}
+
+.deepskyblue-box a {
+  color: white;
+  text-decoration: none;
+}
+
+.new-icon {
+  background-color: deepskyblue;
+  width: 40px;
+  text-align: center;
+  border-radius: 3px;
+}
+
+.entry-cover-image {
+  overflow: hidden;
+}
+
+.entry-cover-image img {
+  -webkit-transition: all 100ms linear;
+  -moz-transition: all 100ms linear;
+  transition: all 100ms linear;
+}
+
+.entry-cover-image img:hover {
+  /*width: 220px;
+  height: 160px;*/
+  transform: scale(1.1);
+}
+
+.topic-content {
+  margin: 20px 0;
+  border-bottom: 2px solid lightgrey;
+  border-top: 2px solid lightgrey;
+  padding: 20px 10px;
+}
+
+.comments-box {
+  padding: 15px 20px;
+  border: 1px solid #D4D4D4;
+  background-color: #F5F5F5;
+  border-radius: 3px;
+}
+
+.comments-list {
+  margin: 20px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.comments-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.comments-date::before {
+  content: '· ';
+}
+
+.comment-actions, .comments-date {
+  color: #999999;
+  font-size: 13px;
+  margin: 0;
+}
+
+.comment-up:hover, .comment-reply-btn:hover {
+  cursor: pointer;
+  color: #666666;
+}
+
+.post-box-content {
+  border: 1px solid #D1D5DA;
+}
+
+.post-box-content .form-group {
+  padding: 10px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.has-up {
+  color: black;
+}

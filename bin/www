@@ -8,26 +8,71 @@ var app = require('../app');
 var debug = require('debug')('my-app:server');
 var http = require('http');
 
+var server = null;
+
+var cluster = require('cluster');
+
+// var numCPUs = require('os').cpus().length
+
+if (cluster.isMaster) {
+  debug('is master');
+  require('os').cpus().forEach(function () {
+    // 为每个 CPU 核心启动服务器
+    startWorker();
+  });
+
+  cluster.on('disconnect', function (worker) {
+    debug('-CLUSTER: Worker %d disconnect from the cluster.', worker.id);
+  });
+
+  // 当有工作线程死掉(退出)时, 创建一个工作线程代替它  
+  cluster.on('exit', function (worker, code, signal) {
+    debug('-CLUSTER: Worker %d died with exit code %d(%s).', worker.id, code, signal);
+    startWorker();
+  });
+} else if (cluster.isWorker) {
+  debug('is worker');
+  startServer();
+}
+
+// startServer();
+
+
 /**
- * Get port from environment and store in Express.
+ * 启动工作线程
  */
+function startWorker() {
+  let worker = cluster.fork();
+  debug('-CLUSTER: Worker %d started.', worker.id);
+}
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
 
 /**
- * Create HTTP server.
+ * 启动服务器
  */
+function startServer() {
 
-var server = http.createServer(app);
+  /**
+   * Get port from environment and store in Express.
+   */
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+  /**
+   * Create HTTP server.
+   */
+
+  server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+}
 
 /**
  * Normalize a port into a number, string, or false.

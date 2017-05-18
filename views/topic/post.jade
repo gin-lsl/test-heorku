@@ -1,0 +1,22 @@
+extends ../layout
+
+block js
+  script(src='/javascripts/topic.js')
+
+block stylesheets
+  link(rel='stylesheet', href='/stylesheets/topic.css')
+
+block content
+  .post-container.mt-30
+    .post-box
+      form.form#postTopic(role='form', action='/topic/post', method='POST')
+        .pull-left
+          img.avatar-45(src='/images/a.jpg')
+        .post-box-content.ml-60
+            .form-group.m-0
+              input#titleField.form-control(name='title', type='text', require, size='30', placeholder='标题', autofocus='autofocus', aria-label='title', autocomplete='off')
+            .form-group.m-0
+              textarea#contentField.form-control(name="content", rows="10", placeholder='请遵守互联网精神')
+              .info 请遵守互联网相关法律法规
+            .form-group.clearfix.m-0
+              button#submit-topic.btn.btn-info.pull-right(type='button') 发布新话题

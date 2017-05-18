@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  form.form-horizontal(role='form', action='/login', method='POST')
+    .form-group
+      label.control-label.col-sm-2(for='emailField') 邮箱
+      .col-sm-10
+        input.form-control#emailField(type='email', name='email', value='d@d.com')
+    .form-group
+      label.control-label.col-sm-2(for='passwordField') 密码
+      .col-sm-10
+        input.form-control#passwordField(type='password', name='password', value='d')
+    .form-group
+      .col-sm-10.col-sm-offset-2
+        input.btn.btn-default(type='submit', value='登录')

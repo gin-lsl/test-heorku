@@ -1,0 +1,48 @@
+.modal.fade#loginModal(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+        h4.modal-title#myModalLabel 登录
+      .modal-body
+        .log-in-on.row
+          .login-box.col-md-4.col-sm-12
+            h1.h4.text-muted.login-title 用户登录
+            span#loginError.error
+            form#login-form.form.mt-30
+              .form-group
+                label(for="loginEmailField") 邮箱
+                span#loginEmailError.error
+                input#loginEmailField.form-control(type='email', name='email')
+              .form-group
+                label(for='loginPasswordField') 密码
+                span#loginPasswordError.error
+                span.pull-right
+                  a(href='/user/forgot') 忘记密码
+                input#loginPasswordField.form-control(type='password', name='password')
+              .form-group.clearfix
+                .checkbox.pull-left
+                  input#loginRememberField.ml-0(type='checkbox', name='remember', checked)
+                  label(for='loginRememberField') 记住登录状态
+                button#btn-login.btn.btn-info.pull-right(type='button') 登 录
+          .log-in-on-v-line
+          .logon-box.col-md-4.col-sm-12
+            h1.h4.text-muted.login-title 新用户注册
+            span#logonError.error
+            form#logon-form.form.mt-30
+              .form-group
+                label(for="logonEmailField") 邮箱
+                span#logonEmailError.error
+                input#logonEmailField.form-control(type='email', name='email')
+              .form-group
+                label(for='logonPasswordField') 密码
+                span#logonPasswordError.error
+                input#logonPasswordField.form-control(type='password', name='password')
+              .form-group
+                label(for='logonPasswordRepeatField') 重复密码
+                span#logonPasswordRepeatError.error
+                input#logonPasswordRepeatField.form-control(type='password', name='password_repeat')
+              .form-group
+                button#btn-logon.btn.btn-info.pull-right(type='button') 注 册
+      .modal-footer
+script(src='/javascripts/global.js')

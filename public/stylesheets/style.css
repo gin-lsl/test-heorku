@@ -1,8 +1,111 @@
+*, *:after, *:before {
+  margin: 0;
+  padding: 0;
+}
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  font: 14px "Consolas", '微软雅黑', Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+.container {
+  flex-grow: 1;
+  /*width: 70%;
+  margin: 0 auto;*/
+}
+
+div.foot {
+  margin: 25px auto;
+}
+
+footer {
+  font-size: 0.9em;
+}
+
+.mt-30 {
+  margin-top: 30px!important;
+}
+
+.ml-0 {
+  margin-left: 0px!important;
+}
+
+.ml-15 {
+  margin-left: 15px!important;
+}
+
+.ml-60 {
+  margin-left: 60px!important;
+}
+
+.mb-10 {
+  margin-bottom: 10px!important;
+}
+
+.m-0 {
+  margin: 0px!important;
+}
+
+.pv-15 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.pl-45 {
+  padding-left: 45px!important;
+}
+
+.pl-60 {
+  padding-left: 60px!important;
+}
+
+.modal-dialog {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.login-box {
+  left: 58%;
+}
+
+.log-in-on-v-line {
+  position: absolute;
+  left: 50%;
+  border-left: 1px solid #CCCCCC;
+  height: 90%;
+}
+
+.logon-box {
+  right: 25%;
+}
+
+@media all and (min-width:992px) {
+  .modal-lg {
+    width: 900px;
+  }
+}
+
+.modal-header {
+  background-color: #EEEEEE;
+}
+
+.error {
+  display: inline-block;
+  color: red;
+}
+
+.avatar-32 {
+  width: 32px;
+  height: 32px;
+}
+
+.avatar-45 {
+  width: 45px;
+  height: 45px;
 }

@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  - if (userInfo)
+    h2 #{userInfo.name}
+    div
+        p
+        span lv: #{userInfo.lv}
+        span 性别: #{userInfo.gender}
+  - else
+    h2 发生错误
+    p 用户不存在或者路径输入有错误!

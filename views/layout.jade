@@ -1,7 +1,24 @@
 doctype html
 html
   head
-    title= title
+    block title
+      title= title
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/top-nav.css')
+    block stylesheets
   body
-    block content
+    - if (currentUser)
+      span#checkIsLogin(hidden)
+    include templates/top-nav
+    .container
+      block content
+    .foot
+      block foot
+        footer Copyright &copy
+    script(src='/javascripts/jquery.min.js')
+    script(src='/javascripts/bootstrap.min.js')
+    script(src='/javascripts/match_title.js')
+    block js
+    - if (!user)
+      include templates/login-box

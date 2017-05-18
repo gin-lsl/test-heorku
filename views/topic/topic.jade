@@ -1,0 +1,61 @@
+extends ../layout
+
+block title
+  title= topic.title || '傻了,连标题都没有'
+
+block js
+  script(src='/javascripts/topic.js')
+
+block stylesheets
+  link(rel='stylesheet', href='/stylesheets/topic.css')
+
+block content
+  - var title = topic.title || '卧槽,标题不见了';
+  .topic_container
+    h2= title
+    p
+      span.post_time 发布时间: #{topic.shortPostDateTime}
+    .topic-content
+      div!= topic.content
+    .comments-container
+      a#comment
+      .comments-box
+        .pull-left
+          - if (currentUser && currentUser.avatar && currentUser.avatar != '')
+            img.avatar-32(src='#{currentUser.avatar}')
+          - else
+            img.avatar-32(src='/images/a.jpg', alt='')
+        .comments-box-content.pl-45
+          form#replyTopic(action='/reply/post', method='POST')
+            input(type='hidden', name='tid', value='#{topic.id}')
+            .form-group
+              textarea.form-control(name='content', rows='3', placeholder='评论请符合互联网精神')
+            .text-right
+              button#btn-commit-comment.btn.btn-info(type='button') 发布评论
+      .comments-list
+        each reply in replies
+          section.comments-item.pv-15(data-id='#{reply._id}')
+            .pull-left
+              a(href='/user/#{reply.userId}')
+              - if (reply.user && reply.user.avatar && reply.user.avatar !== '')
+                img.avatar-32(src='#{reply.user.avatar}', alt='hehe')
+              - else
+                img.avatar-32(src='/images/a.jpg')
+            .comments-content.pl-45
+              .comment-top.mb-10
+                strong
+                  - if (reply.user)
+                    a(href='/user/#{reply.user._id}')= reply.user.name
+                  - else
+                    a undefined
+                span.comments-is-author
+                span.comments-date= reply.shortPostDateTime
+              .mb-10= reply.content
+              .comment-actions
+                span.comment-up
+                  i.fa.fa-thumbs-up(aria-hidden='true')
+                    - if (reply.ups.length > 0)
+                      span.glyphicon.glyphicon-thumbs-up.has-up(title='点赞') &nbsp;
+                    - else
+                      span.glyphicon.glyphicon-thumbs-up(title='取消') &nbsp;
+                span.comment-reply-btn.ml-15 回复

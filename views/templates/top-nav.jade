@@ -1,0 +1,16 @@
+nav.navbar.navbar-default(role=navigation)
+  .navbar-header
+    a.navbar-brand(href='/') 首页
+  ul#top-nav-bar.nav.navbar-nav
+    - if (currentUser)
+      li
+        a(href='/user/#{currentUser.id}') #{currentUser.name}
+      li
+        a(href='/user/logout') 注销
+      li
+        a(href='/topic/post') 发布
+    - else
+      li#go-log-in-on(role='button')
+        a 登录/注册
+      //- li#go-logon
+      //-   a(href='/logon') 注册
