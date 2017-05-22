@@ -1,12 +1,59 @@
 extends ../layout
 
+block stylesheets
+  link(rel='stylesheet', href='/stylesheets/user.css')
+
+block js
+  script(src='/javascripts/user.js')
+
 block content
   - if (userInfo)
-    h2 #{userInfo.name}
-    div
-        p
-        span lv: #{userInfo.lv}
-        span 性别: #{userInfo.gender}
+    .profile
+      span#user-id('data-user-id'=userInfo.id)
+      .profile-heading.pt-40
+        div
+          .row
+            .col-md-2.col-sm-3.col-xs-3
+              .profile-heading-avatar-warp
+                a(href='/user/#{userInfo.id}')
+                  img.profile-heading-avatar.w100(src=userInfo.avatar ? userInfo.avatar : '/images/a.jpg', alt=userInfo.name)
+              .profile-heading-social
+                ul
+                  li
+                    a.icon-sn-weibo
+                  li
+                    a.icon-sn-github
+            .col-md-5.col-sm-9.col-xs-9
+              h2.profile-heading-name= userInfo.name
+              .profile-heading-award
+              .profile-heading-other
+            .col-md-5.col-sm-12.col-xs-12.profile-heading-desc
+              .profile-heading-desc-heading.clearfix
+                span.profile-heading-desc-heading-title.pull-right
+                  span.profile-heading-desc-heading-title-min.glyphicon.glyphicon-minus
+                  span.profile-heading-desc-heading-title-max.glyphicon.glyphicon-map-marker
+                  span.profile-heading-desc-heading-title-close.glyphicon.glyphicon-cloud
+              .profile-heading-desc-body.p-20
+                .profile-desc= userInfo.say
+      .profile-body.pt-40.row
+        .profile-body-topics-or-replies.col-md-10
+          .panel.panel-default
+            .panel-heading.clearfix
+              h3.panel-title 近期活动
+              .btn-group.pull-right
+                button#btn-show-topics.btn.btn-default.btn-sm(type='button') 主题
+                button#btn-show-replies.btn.btn-default.btn-sm.active(type='button') 回复
+            .panel-body
+              .table.recent-info
+        .col-md-2
+          .visit-info
+            p(title='统计所有访问,包括游客') 访问人数: #{userInfo.visit}
+            #recent-visit('data-recent-user-id-list'=userInfo.recentVisits, title='只统计已登录用户的访问') 最近来访
+            #recent-visit-list
+      //-   p
+      //-   span lv: #{userInfo.lv}
+      //-   span 性别: #{userInfo.gender}
+      //- .other-info.mt-30
   - else
     h2 发生错误
     p 用户不存在或者路径输入有错误!

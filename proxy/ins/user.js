@@ -72,3 +72,30 @@ module.exports.createNewUserPromise = (email, password) => {
         salt: salt,
     })
 }
+
+
+/**
+ * 根据id查询用户信息, 并且只返回安全的字段
+ * @param {String} userId
+ * @param {function(Error, *)} callback
+ */
+module.exports.findUserByIdAndReturnSafeFields = (userId, callback) => {
+    UserModel.findById(userId, (err, findUserInfoRes) => {
+        if (err) {
+            return callback(err);
+        }
+        return callback(null, {
+            id: findUserInfoRes._id,
+            email: findUserInfoRes.email,
+            name: findUserInfoRes.name,
+            gender: findUserInfoRes.gender,
+            lv: findUserInfoRes.lv,
+            say: findUserInfoRes.say,
+            avatar: findUserInfoRes.avatar,
+            logonDateTime: findUserInfoRes.logonDateTime,
+            visit: findUserInfoRes.visit,
+            recentVisits: findUserInfoRes.recentVisits,
+            follows: findUserInfoRes.follows
+        })
+    })
+}

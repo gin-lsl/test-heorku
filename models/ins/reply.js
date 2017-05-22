@@ -11,12 +11,14 @@ const ReplySchema = mongoose.Schema({
     topicId: ObjectId,
     // 用户id
     userId: ObjectId,
-    // 回复给某个用户的id
-    replyToUserId: ObjectId,
+    // 回复给某个Reply的id
+    replyToReplyId: ObjectId,
     // 点赞的用户的id
     ups: [ObjectId],
     // 反对数量
     downs: [ObjectId],
+    // 所在楼层
+    floor: Number,
 })
 
 const ReplyModel = mongoose.model('reply', ReplySchema)

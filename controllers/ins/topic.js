@@ -1,4 +1,5 @@
 const { TopicModel, UserModel, ReplyModel } = require('../../models')
+const { UserProxy } = require('../../proxy')
 const async = require('async')
 
 const getShortDateTime = require('../../utils').tool_methods.getShortDateTime
@@ -47,6 +48,11 @@ module.exports.findById = (req, res) => {
     async.waterfall([
         // topic
         next => TopicModel.findById(req.params.tid, next),
+        // topic 的作者
+        (topic, next) => UserProxy.findUserByIdAndReturnSafeFields(topic.userId, (err, findAuthorRes) => {
+            topic.author = findAuthorRes
+            next(null, topic)
+        }),
         // 更新访问量
         (topic, next) => TopicModel.findByIdAndUpdate(topic._id, { $inc: { visit: 1 } }, (err, resUpdate) => next(null, topic)),
         // 查询回复

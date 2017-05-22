@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 var UserSchema = new mongoose.Schema({
     email: String,
@@ -10,7 +11,11 @@ var UserSchema = new mongoose.Schema({
     avatar: String,
     logonDateTime: Date,
     lastLoginDateTime: Date,
+    visit: Number,
+    recentVisits: [ObjectId],
     salt: String,
+    follows: [ObjectId],
+    hisFollows: [ObjectId],
 })
 
 // UserSchema.statics.findOneByEmailAndPassword = (email, password, callback) => {

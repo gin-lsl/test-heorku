@@ -1,5 +1,5 @@
 const { UserModel } = require('../../models')
-const { UserProxy } = require('../../proxy')
+const { UserProxy, TopicProxy, ReplyProxy } = require('../../proxy')
 const regex_tools = require('../../utils').regex_tools
 const debug = require('debug')('my-app:controllers:ins:user')
 
@@ -89,7 +89,7 @@ module.exports.login = (req, res) => {
             } else if (user) {
                 // 更新必须执行回调
                 UserModel.findByIdAndUpdate(user._id, { $set: { lastLoginDateTime: new Date() } }, (err2, updateRet) => { })
-                
+
                 let __user = {
                     id: user._id,
                     email: user.email,
@@ -132,22 +132,230 @@ module.exports.logout = (req, res) => {
 
 /**
  * 根据id查找
+ *
+ * 需要根据情况更新此用户被访问的次数
+ *
+ * @param {Request} req
+ * @param {Response} res
  */
-module.exports.findById = (req, res) => {
+module.exports.findByIdAndUpdateVisitInfomation = (req, res) => {
     debug('获取某个用户信息')
+    let currentUser = req.session.user
     let id = req.params.id
-    UserModel.findById(id, (err, _user) => {
-        debug('--error: %O', err)
-        debug('---_user: %O', _user)
-        if (_user) {
-            _user.id = _user._id
-            delete _user._id
-        }
-        res.render('user/user', {
-            error: err,
-            title: err ? 'Error' : _user.name,
-            userInfo: _user,
-            currentUser: req.session.user
+    UserModel.findById(id)
+        .then(findUserRes => {
+            debug('查找到用户信息: %O', findUserRes)
+            // 判断是否有用户登录
+            if (currentUser) {
+                if (currentUser.id !== id) {
+                    debug('查找的用户不是当前登录用户')
+                    return UserModel.findByIdAndUpdate(id, { $addToSet: { recentVisits: currentUser.id }, $inc: { visit: 1 } })
+                }
+            } else {
+                return UserModel.findByIdAndUpdate(id, { $inc: { visit: 1 } })
+            }
+            return findUserRes
         })
+        .then(someDataRes => {
+            debug('进入第二个then回调 回调数据: %O', someDataRes)
+            // return res.render('user/user', {
+            //     // userInfo: 
+            // })
+            return res.render('user/user', {
+                userInfo: someDataRes,
+                currentUser: req.session.user
+            })
+        })
+        .catch(error => {
+            return res.render('user/user', {
+                userInfo: someDataRes,
+                currentUser: req.session.user
+            })
+        })
+    // UserModel.findById(id, (err, _user) => {
+    //     debug('--error: %O', err)
+    //     debug('---_user: %O', _user)
+    //     if (_user) {
+    //         _user.id = _user._id
+    //         delete _user._id
+    //     }
+    //     res.render('user/user', {
+    //         error: err,
+    //         title: err ? 'Error' : _user.name,
+    //         userInfo: _user,
+    //         currentUser: req.session.user
+    //     })
+    // })
+}
+
+
+/**
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findAllTopics = (req, res) => {
+    let userId = req.params.id
+    TopicProxy.finAllByUserId(userId, (err, findTopicsRes) => {
+        return res.json({
+            success: !err,
+            data: err ? '查询用户发布的帖子信息出错' : findTopicsRes
+        })
+    })
+}
+
+
+/**
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findAllReplies = (req, res) => {
+    let userId = req.params.id
+    ReplyProxy.findAllByUserId(userId, (err, findRepliesRes) => {
+        return res.json({
+            success: !err,
+            data: err ? '查询用户所有回复信息出错' : findRepliesRes
+        })
+    })
+}
+
+
+/**
+ * 查找用户信息, 但是不更新被访问的次数
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findOneByIdAndNothingToDo = (req, res) => {
+    UserProxy.findUserByIdAndReturnSafeFields(req.params.id, (err, findUserInfoRes) => {
+        return res.json({
+            success: !err,
+            data: err
+                ? '查询用户信息失败'
+                : findUserInfoRes
+        })
+    })
+}
+
+
+/**
+ * 关注某人, 需要登录
+ *
+ * 如果关注失败, 返回的json会有 type 字段
+ *
+ * 0 => 没有登录
+ *
+ * 1 => 不能关注/取消关注自己
+ *
+ * 2 => 内部/未知错误
+ *
+ * 3 => 没有找到相关的用户, id错误
+ *
+ * 4 => 不能重复关注/取消
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.followUser = (req, res) => {
+    let _currentUser = req.session.user
+    // 想要关注的那个人的id
+    let _followUserId = req.params.id
+    let wannaFollow = req.query.wannaFollow
+    debug('参数: %O, %O', req.params, req.query)
+    debug('wannaFollow: ' + Boolean(wannaFollow))
+    // 检查是否登录
+    if (!_currentUser) {
+        return res.json({
+            success: false,
+            type: 0,
+            data: '大侠您是谁啊..不登录人家真的认不出来了啦o(*////▽////*)q'
+        })
+    }
+    // 检查是否想要对自己进行相关操作
+    if (_currentUser.id == _followUserId) {
+        return res.json({
+            success: false,
+            type: 1,
+            data: '不要对自己本人执行这个操作了啦！'
+        })
+    }
+    // 查找想要关注的人的信息
+    UserModel.findById(_followUserId, (err, findUserRes) => {
+        debug('查找需要关注的用户结果 err: %O, %O', err, findUserRes)
+        if (err || !findUserRes) {
+            return res.json({
+                success: false,
+                type: err ? 2 : 3,
+                data: err ? '查询发生错误, 请稍后重试' : '没有找到此用户信息'
+            })
+        } else {
+            // 这里的等号是 两个等号, 因为 follows 里面的类型是 mongodb 的 ObjectId 类型的
+            if (findUserRes.follows.find(ele => ele == _currentUser.id)) {
+                debug('在关注对方的用户列表中找到自己')
+                // 如果想要关注，则提示已经关注过；
+                // 如果想取消关注，则继续下一步
+                if (wannaFollow) {
+                    debug('已经关注，直接退出')
+                    return res.json({
+                        success: false,
+                        type: 4,
+                        data: '已经关注过了呢！'
+                    })
+                }
+                debug('没有关注对方，进行关注的操作')
+                UserModel.findByIdAndUpdate(_followUserId, { $pull: { follows: _currentUser.id } }, (err, update_PULL_followsRes) => {
+                    if (err) {
+                        return res.json({
+                            success: false,
+                            type: 2,
+                            data: '未知错误，请稍后重试'
+                        })
+                    }
+                    UserModel.findByIdAndUpdate(_currentUser.id, { $pull: { hisFollows: _followUserId } }, (err, update_PULL_hisFollowsRes) => {
+                        return res.json({
+                            success: !err,
+                            type: err ? 2 : NaN,
+                            data: err ? '未知错误，请稍后重试' : '好吧，已经取消关注TA了。'
+                        })
+                    })
+                })
+            } else {
+                debug('没有在关注对方的列表中找到自己')
+                // 没有在关注对方的列表中找到自己
+                // 如果是想要关注对方，则执行；
+                // 如果是响应对对方进行取关操作，则失败
+                if (wannaFollow) {
+                    debug('进行关注操作')
+                    // 更新 "我关注的" 用户列表
+                    UserModel.findByIdAndUpdate(_followUserId, { $push: { follows: _currentUser.id } }, (err, updateFollowsRes) => {
+                        if (err) {
+                            return res.json({
+                                success: false,
+                                type: 2,
+                                data: '操作失败，请稍后重试'
+                            })
+                        }
+                        // 更新 "关注我的" 用户列表
+                        UserModel.findByIdAndUpdate(_currentUser.id, { $push: { hisFollows: _followUserId } }, (err, updateHisFollowsRes) => {
+                            return res.json({
+                                success: !err,
+                                type: err ? 2 : NaN,
+                                data: err
+                                    ? '操作失败, 请稍后重试！'
+                                    : wannaFollow
+                                        ? '好了，不在关注TA了。。'
+                                        : 'OK！已经关注了TA了,嘿嘿嘿(●ˇ∀ˇ●)'
+                            })
+                        })
+                    })
+                } else {
+                    debug('本来就没有关注对方')
+                    return res.json({
+                        success: false,
+                        type: 4,
+                        data: '你本来就没有关注TA了啦'
+                    })
+                }
+            }
+        }
     })
 }

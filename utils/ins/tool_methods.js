@@ -25,7 +25,7 @@ module.exports.getRandomString = (len = 16) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     const pos = chars.length
     let _ = ''
-    for (var i = 0
+    for (var i = 0; i < len; i++) {
         _ += chars.charAt(Math.floor(Math.random() * pos))
     }
     return _

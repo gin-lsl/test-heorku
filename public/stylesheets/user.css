@@ -1,0 +1,23 @@
+.profile-heading-desc-body {
+  min-height: 200px;
+  background-color: #EEEEEE;
+}
+
+.profile-heading-desc-heading {
+  height: 35px;
+  background-color: lightgrey;
+}
+
+.profile-heading-desc-heading-title {
+  height: 100%;
+  width: 100px;
+  background-color: azure;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.panel-title {
+  display: inline-block;
+}

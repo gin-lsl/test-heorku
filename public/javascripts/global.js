@@ -1,5 +1,61 @@
 $(function ($) {
 
+    // 添加对Array.prototype.find() 方法的支持    
+    if (!Array.prototype.find) {
+        /**
+         * @param {function(any)} predicate
+         */
+        Array.prototype.find = function (predicate) {
+            'use strict'
+            if (this == null) {
+                throw new TypeError('Array.prototype.find called on null or undefined')
+            }
+            if (typeof predicate !== 'function') {
+                throw new TypeError('predicate must be a function')
+            }
+            var list = Object(this)
+            var length = list.length >>> 0
+            var thisArg = arguments[1]
+            var value
+
+            for (var i = 0; i < length; i++) {
+                value = list[i]
+                if (predicate.call(thisArg, value, i, list)) {
+                    return value
+                }
+            }
+            return undefined
+        }
+    }
+
+        // 添加对Array.prototype.findIndex() 方法的支持    
+    if (!Array.prototype.findIndex) {
+        /**
+         * @param {function(any)} predicate
+         */
+        Array.prototype.findIndex = function (predicate) {
+            'use strict'
+            if (this == null) {
+                throw new TypeError('Array.prototype.find called on null or undefined')
+            }
+            if (typeof predicate !== 'function') {
+                throw new TypeError('predicate must be a function')
+            }
+            var list = Object(this)
+            var length = list.length >>> 0
+            var thisArg = arguments[1]
+            var value
+
+            for (var i = 0; i < length; i++) {
+                value = list[i]
+                if (predicate.call(thisArg, value, i, list)) {
+                    return i
+                }
+            }
+            return -1
+        }
+    }
+
     // 初始化变量    
     var $logonForm = $('#logon-form')
     var $logonError = $logonForm.find('#logonError')
@@ -22,19 +78,42 @@ $(function ($) {
     var regexPureNumber = /^[0-9]+$/
 
 
+    // $.justToFreezeWidth = function (rootSvg) {
+    //     var windowWidth = $(window).width()
+
+    //     var viewBoxVal = rootSvg.getAttribute('viewBox')
+    //     var viewBoxWidth = viewBoxVal.split(',')[2]
+    //     var viewBoxHeight = viewBoxVal.split(',')[3]
+    //     rootSvg.removeAttribute('width')
+    //     rootSvg.removeAttribute('height')
+
+    //     var setWidth = windowWidth
+    //     var setHeight = (setWidth * viewBoxHeight) / viewBoxWidth
+    //     rootSvg.setAttribute('width', setWidth)
+    //     rootSvg.setAttribute('height', setHeight)
+    // }
+
+
+    $.testFun = function () {
+        console.log('test')
+    }
+
+    $.testFun()
+
     /**
      * 当登录的时候调用, ajax方式的登录, 页面不重新加载, 所以使用这个方法更新页面内容
      *
      * @param {any} userInfo 
      */
     function hasUserLogin(userInfo) {
-        console.log('用户信息: %O', userInfo)
         $('#top-nav-bar').html(
             '<li><a href="/user/' + userInfo.id + '">' + userInfo.name + '</a></li>' +
             '<li><a href="/user/logout">注销</a></li>' +
             '<li><a href="/post">发布</a></li>'
         )
         $('#loginModal').modal('hide')
+        // $(document.body).append($('<span id="checkIsLogin" hidden></span>'))
+        window.location.reload()
     }
 
     /**
@@ -44,6 +123,8 @@ $(function ($) {
         $('#top-nav-bar').html(
             '<li><a>登录/注册</a></li>'
         )
+        // $('#checkIsLogin').remove();
+        window.location.reload()
     }
 
 
@@ -53,7 +134,7 @@ $(function ($) {
      * @param {Boolean} email 邮箱
      * @param {Boolean} password 密码
      * @param {Boolean} password_repeat 重复密码
-     */    
+     */
     function resetLogonErrorEmpty(email, password, password_repeat) {
         if (email === undefined && password === undefined && password_repeat === undefined) {
             $logonEmailError.text('')
@@ -85,6 +166,7 @@ $(function ($) {
         })
     }
 
+    // $(function ($) {
     /**
      * 打开登录面板
      */
@@ -166,5 +248,14 @@ $(function ($) {
                 }
             }
         })
+    })
+
+    // 加载图片，替换默认的图片
+    $('.avatar').each(function () {
+        var $self = $(this)
+        var selfDataSrc = $self.data('src')
+        if (selfDataSrc && selfDataSrc != '') {
+            $self.attr('src', selfDataSrc)
+        }
     })
 })

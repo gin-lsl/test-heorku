@@ -11,36 +11,46 @@ block stylesheets
 
 block content
   - var title = topic.title || '卧槽,标题不见了';
-  .topic_container
+  .topic_container.col-md-9
     h2= title
     p
       span.post_time 发布时间: #{topic.shortPostDateTime}
     .topic-content
-      div!= topic.content
+      .mv-20!= topic.content
     .comments-container
       a#comment
       .comments-box
         .pull-left
-          - if (currentUser && currentUser.avatar && currentUser.avatar != '')
-            img.avatar-32(src='#{currentUser.avatar}')
-          - else
-            img.avatar-32(src='/images/a.jpg', alt='')
+          //- TODO 这里需要修改, 头像数据稍后在加载
+          img.avatar.avatar-32(src=defaultImage, data-src=currentUser ? currentUser.avatar : '')
         .comments-box-content.pl-45
           form#replyTopic(action='/reply/post', method='POST')
-            input(type='hidden', name='tid', value='#{topic.id}')
             .form-group
-              textarea.form-control(name='content', rows='3', placeholder='评论请符合互联网精神')
-            .text-right
-              button#btn-commit-comment.btn.btn-info(type='button') 发布评论
+              input#replyTopicIdField(type='hidden', name='tid', value=topic.id)
+              input#replyToUserIdField(type='hidden', name='reply_to_user_id')
+              input#replyToFloorField(type='hidden', name='reply_to_floor')
+              input#replyToReplyIdField(type='hidden', name='reply_to_reply_id')
+              textarea#write-reply.form-control(name='content', rows='3', placeholder='评论请符合互联网精神')
+            .clearfix
+              span.reply-to-user-ready
+                span#reply-to-user-name
+                span#reply-to-user-close(role='button', title='取消') &times;
+              button#btn-commit-comment.btn.btn-info.pull-right(type='button',
+               data-container='body',
+               data-toggle='popover',
+               data-trigger='click',
+               data-placement='top',
+               data-content='',
+               data-delay='{ show: 0, hide: 2000 }') 发布评论
       .comments-list
         each reply in replies
-          section.comments-item.pv-15(data-id='#{reply._id}')
+          section.comments-item.pv-15.clearfix(data-id=reply._id, data-reply-info=reply)
             .pull-left
               a(href='/user/#{reply.userId}')
-              - if (reply.user && reply.user.avatar && reply.user.avatar !== '')
-                img.avatar-32(src='#{reply.user.avatar}', alt='hehe')
+              - if (reply.user)
+                img.avatar.avatar-32(src='/images/a.jpg', data-src=reply.user.avatar, alt=reply.user.name)
               - else
-                img.avatar-32(src='/images/a.jpg')
+                img.avatar.avatar-32(src='/images/a.jpg', data-src=reply.user.avatar)
             .comments-content.pl-45
               .comment-top.mb-10
                 strong
@@ -50,12 +60,55 @@ block content
                     a undefined
                 span.comments-is-author
                 span.comments-date= reply.shortPostDateTime
-              .mb-10= reply.content
-              .comment-actions
-                span.comment-up
+              .mv-20.ml-15
+                - if (reply.replyToReplyId)
+                  .reply-to.mb-10(data-reply-to-id=reply.replyToReplyId)
+                .comment-content= reply.content
+              .comment-actions.text-right.pr-20
+                - var hasUp = false
+                each _uid in reply.ups
+                  - if (currentUser && currentUser.id == _uid)
+                      - hasUp = true
+                span.comment-up(class={ 'has-up': hasUp }, role='button', title=hasUp ? '取消' : '点赞' )
                   i.fa.fa-thumbs-up(aria-hidden='true')
-                    - if (reply.ups.length > 0)
-                      span.glyphicon.glyphicon-thumbs-up.has-up(title='点赞') &nbsp;
+                    - if (hasUp)
+                      span.glyphicon.glyphicon-thumbs-up
+                      span.up-count= reply.ups.length
                     - else
-                      span.glyphicon.glyphicon-thumbs-up(title='取消') &nbsp;
+                      span.glyphicon.glyphicon-thumbs-up
+                      span.up-count= reply.ups.length
                 span.comment-reply-btn.ml-15 回复
+  .col-md-3
+    -if (topic.author)
+      - var _author = topic.author
+        .panel.panel-default
+          .panel-heading
+            h3.panel-title= topic.author.name
+          .p-10
+            #topic-author-info(data-topic-user-id=_author.id)
+              - if (currentUser)
+                - var hasFollow = false
+                each _fuid in _author.follows
+                  - if (_fuid == currentUser.id)
+                    - hasFollow = true
+                - if (hasFollow) {
+                  button#btn-follow-author.btn.btn-default.pull-right(data-has-follow='true'
+                    disabled=currentUser.id == _author.id
+                    title=currentUser.id == _author.id ? '不能关注自己' : '') 取消关注
+                - }
+                - else {
+                  button#btn-follow-author.btn.btn-info.pull-right(data-has-follow='false'
+                    disabled=currentUser.id == _author.id
+                    title=currentUser.id == _author.id ? '不能关注自己' : '') 关注作者
+                - }
+              - else {
+                button#btn-follow-author.btn.btn-info.pull-right(data-has-follow='false'
+                  disabled=currentUser.id == _author.id
+                  title=currentUser.id == _author.id ? '不能关注自己' : '') 关注作者
+              - }
+                div
+                  a(href='/user/#{_author.id}')
+                    img.avatar.topic-author-avatar(src='/images/a.jpg', data-src=_author.avatar, alt=_author.name, title=_author.name)
+                  a.topic-author-name(href='/user/#{_author.id}')
+                    strong= _author.name
+                  p.m-0 经验值:#{_author.lv}
