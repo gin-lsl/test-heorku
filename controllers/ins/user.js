@@ -57,10 +57,24 @@ module.exports.logon = (req, res) => {
         if (_user) {
             return resJson(res, { type: 1, msg: '此邮箱已被注册' })
         }
-        UserProxy.createNewUserPromise(email, password).then(data => {
-            // req.session.user = 
-            debug('注册返回数据: %O', data)
-            resJson(res, '注册成功', true)
+        UserProxy.createNewUserPromise(email, password).then(_dataCreateUserWhenLogon => {
+            let __user = {
+                    id: _dataCreateUserWhenLogon._id,
+                    email: _dataCreateUserWhenLogon.email,
+                    name: _dataCreateUserWhenLogon.name,
+                    gender: _dataCreateUserWhenLogon.gender,
+                    lv: _dataCreateUserWhenLogon.lv,
+                    say: _dataCreateUserWhenLogon.say,
+                    avatar: _dataCreateUserWhenLogon.avatar,
+                    follows: _dataCreateUserWhenLogon.follows,
+                    hisFollows: _dataCreateUserWhenLogon.hisFollows,
+                    recentVisits: _dataCreateUserWhenLogon.recentVisits,
+                    logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
+                    lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
+                }
+            req.session.user = __user
+            debug('注册返回数据: %O', __user)
+            resJson(res, __user, true)
         }).catch(uErr => resJson(res, '未知错误, 请稍后重试'))
         // return resJson(res, '注册成功', true)
     })

@@ -1,4 +1,4 @@
-var Topic = require('../../models/topic')
+var Topic = require('../../models').TopicModel
 require('../../configs/mongodb_conn')()
 var debug = require('debug')('my-app:tests:models:topic')
 
@@ -20,7 +20,8 @@ Topic.find((err, topics) => {
             'mongoose',
             'cluster'
         ],
-        postDateTime: new Date()
+        postDateTime: new Date(),
+        userId: '5922db952b32320040658051'
     }).save()
 
     new Topic({
@@ -34,7 +35,8 @@ Topic.find((err, topics) => {
             'Spring MVC',
             'redis'
         ],
-        postDateTime: new Date()
+        postDateTime: new Date(),
+        userId: '5922db952b32320040658051'
     }).save()
 
     new Topic({
@@ -48,6 +50,7 @@ Topic.find((err, topics) => {
             'ASP.Net',
             'Http'
         ],
-        postDateTime: new Date()
+        postDateTime: new Date(),
+        userId: '5922db952b32320040658051'
     }).save()
 })

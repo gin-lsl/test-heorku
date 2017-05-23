@@ -226,7 +226,9 @@ $(function ($) {
             console.log('注册结果')
             console.log(logonResponse)
             if (logonResponse.success) {
+                // 注冊成功
                 resetLogonErrorEmpty()
+                window.location.reload()
             } else {
                 var _ = logonResponse.data
                 switch (_.type) {

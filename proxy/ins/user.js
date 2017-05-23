@@ -57,9 +57,7 @@ module.exports.findOneByEmail = (email, callback) => UserModel.findOne({ email: 
  */
 module.exports.createNewUserPromise = (email, password) => {
     let salt = getRandomString()
-    // let _ = crypto.createHash('sha1')
     salt = crypto.createHash('sha1').update(HASH_SECRET).update(getRandomString()).digest('hex')
-    // crypto.createHash('sha1').update(HASH_SECRET).update(password)
     password = crypto.createHash('sha1').update(salt).update(password).digest('hex')
     let now = new Date()
     return UserModel.create({
@@ -70,6 +68,10 @@ module.exports.createNewUserPromise = (email, password) => {
         logonDateTime: now,
         lastLoginDateTime: now,
         salt: salt,
+        lv: 1,
+        follows: [],
+        hisFollows: [],
+        recentVisits: [],
     })
 }
 
