@@ -373,3 +373,20 @@ module.exports.followUser = (req, res) => {
         }
     })
 }
+
+
+/**
+ * 修改用户头像
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findByIdAndUpdateAvatar = (req, res) => {
+    UserModel.findByIdAndUpdate(req.session.user.id, {
+        $set: {
+            avatar: '/images/covers/' + req.coverImageName
+        }
+    }, (err, updateAvatarRes) => {
+        debug('更新头像结果: Err: %O, updateAvatarRes: %O', err, updateAvatarRes)
+        return res.redirect('back')
+    })
+}

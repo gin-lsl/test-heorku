@@ -8,7 +8,7 @@ var debug = require('debug')('my-app:controllers:ins:topic')
 
 /**
  * 显示 新增 topic 页面
- * @param {Request} req,
+ * @param {Request} req
  * @param {Response} res
  */
 module.exports.showPost = (req, res) => {
@@ -45,6 +45,7 @@ module.exports.save = (req, res) => {
     let _category = _body.category
     let _tags = _body.tags
     let _userId = req.session.user.id
+    debug('图片名称: %S', req.coverImageName)
 
     debug('请求体: %O', _body)
     TopicModel.create({
@@ -53,7 +54,8 @@ module.exports.save = (req, res) => {
         category: _category,
         postDateTime: new Date(),
         tags: _tags,
-        userId: _userId
+        userId: _userId,
+        cover: req.coverImageName,
     }, (err, _createTopicRes) => {
         debug('插入topic文档结果')
         debug('Err: %O', err)

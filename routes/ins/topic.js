@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const topic = require('../../controllers').topicController
-const fileUpload = require('../../middlewaves')
+const fileUpload = require('../../middlewaves').FileUpload
 
 const debug = require('debug')('my-app:routes:ins:topic')
 
@@ -12,12 +12,15 @@ router.use((req, res, next) => {
     next()
 })
 
-router.get('/test', (req, res) =>{
+router.post('/test', fileUpload.single('newavatar'), (req, res) =>{
     req.test = '呵呵'
     debug('/test 查看 %O', req.test)
-    return res.json({
-        success: true
-    })
+    debug('FileName: %s', req.coverImageName)
+    debug('请求体: %O', req.body)
+    // return res.json({
+    //     success: true
+    // })
+    return res.redirect('back')
 })
 
 router.get('/test1', (req, res) => {

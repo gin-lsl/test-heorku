@@ -11,6 +11,7 @@ var TopicSchema = mongoose.Schema({
     postDateTime: Date,
     visit: Number,
     userId: mongoose.Schema.Types.ObjectId,
+    cover: String,
 })
 
 /**

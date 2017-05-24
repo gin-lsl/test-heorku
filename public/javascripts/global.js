@@ -93,13 +93,6 @@ $(function ($) {
     //     rootSvg.setAttribute('height', setHeight)
     // }
 
-
-    $.testFun = function () {
-        console.log('test')
-    }
-
-    $.testFun()
-
     /**
      * 当登录的时候调用, ajax方式的登录, 页面不重新加载, 所以使用这个方法更新页面内容
      *
@@ -159,8 +152,6 @@ $(function ($) {
                 hasUserLogin(loginRet.data)
                 $('.error').text('')
             } else {
-                console.log('登录失败')
-                console.log(loginRet)
                 $('#loginError').text(loginRet.error)
             }
         })
@@ -179,7 +170,6 @@ $(function ($) {
     })
 
     $('#btn-logon').click(function () {
-        console.log('点击注册')
         var _logonEmailValue = $logonEmailField.val()
         var _logonPasswordValue = $logonPasswordField.val()
         var _logonPasswordRepeatValue = $logonPasswordRepeatField.val()
@@ -223,8 +213,6 @@ $(function ($) {
             password: _logonPasswordValue,
             password_repeat: _logonPasswordRepeatValue,
         }, function (logonResponse) {
-            console.log('注册结果')
-            console.log(logonResponse)
             if (logonResponse.success) {
                 // 注冊成功
                 resetLogonErrorEmpty()

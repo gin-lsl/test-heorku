@@ -10,7 +10,7 @@ block content
         article.post
           figure.entry-cover-image
             a(href='/topic/#{topic._id}')
-              img(alt=topic._id, src='/images/kn1.jpg')
+              img(alt=topic._id, src=topic.cover ? '/images/covers/' + topic.cover : '/images/kn1.jpg')
           div.entry-info
             header.entry-header
               a(href='/topic/#{topic._id}') #{topic.title}

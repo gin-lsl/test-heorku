@@ -30,7 +30,6 @@ $(function ($) {
                     }, 2000);
                 }
             })
-            console.log(replyTopicForm)
         } else {
             // 用户未登录
             $('#loginModal').modal('toggle')
@@ -41,8 +40,6 @@ $(function ($) {
         var $postTopicForm = $('#postTopic')
         var $titleField = $postTopicForm.find('#titleField')
         var $contentField = $postTopicForm.find('#contentField')
-        console.log($titleField.val())
-        console.log($contentField.val())
     })
 
     $('.comment-up').click(function (evt) {
@@ -107,18 +104,10 @@ $(function ($) {
             $('#loginModal').modal('toggle')
             return $('span.some-hint').text('大侠您是谁啊..不登录人家真的认不出来了啦o(*////▽////*)q')
         }
-        console.log('是否已经关注: ' + hasFollow)
         var sendObj = hasFollow ? null : { wannaFollow: true }
-        if (hasFollow) {
-            console.log('hasFollow 的值是 true')
-        } else {
-            console.log('hasFollow 的值是 false')
-        }
         if ($topicAuthorInfo.length > 0) {
-            console.log('发送的对象: %O', sendObj)
             $.get('/user/follow/' + JSON.parse($topicAuthorInfo.data('topic-user-id')), sendObj, function (followAuthorResponse) {
                 if (followAuthorResponse.success) {
-                    console.log('操作成功')
                     if (hasFollow) {
                         // 执行的是取消关注的操作
                         $btnSelf.removeClass('btn-default').addClass('btn-info').data('has-follow', Boolean(false)).text('关注作者')
@@ -185,15 +174,12 @@ $(function ($) {
     })
     $replyTos.each(function (_index, _ele) {
         var reply_to_id = JSON.parse($(_ele).data('reply-to-id'))
-        console.log('reply_to_id: ' + reply_to_id)
         var foundReplyIndex = replyList.findIndex(function (ele) {
             return ele._id == reply_to_id
         })
         if (foundReplyIndex >= 0) {
             var _username = $($replies_sectionList[foundReplyIndex]).find('.comment-top a').text()
-            console.log(_username)
             var $_ele = $(_ele)
-            console.log('----------reply: %O', replyList[foundReplyIndex])
             var popDiv = '<div class="pop-reply-info"><p>@' + _username + ' 说：</p><p>' + replyList[foundReplyIndex].content + '</p></div>'
             $_ele.html('<span class="show-pop"><span>回复给：</span><a class="reply-name-pop-comment-content" href="/user/'
                 + replyList[foundReplyIndex].userId
@@ -218,7 +204,6 @@ $(function ($) {
     var $previewCoverCanvas = $('#preview-cover-canvas')
 
     $fileField.change(function (evt) {
-        console.log('文件字段发生改变')
         var reader = new FileReader()
         var $previewCover = $('#preview-cover')
         reader.onload = function (_e) {
@@ -229,7 +214,6 @@ $(function ($) {
             // ctx.drawImage(evt.target.files[0], 0, 0)
 
         }
-        console.log('%O', evt.target.files)
         reader.readAsDataURL(evt.target.files[0])
     })
 
@@ -251,7 +235,6 @@ $(function ($) {
     function addTag() {
         var _tagsFieldVal = $tagsField.val().trim()
         var _tagListLength = tagList.length >>> 0
-        console.log('_tagsFieldVal: ' + _tagsFieldVal + ', _tagListLength: ' + _tagListLength)
         // if (tagCount <= 0 || _tagsFieldVal == '') {
         //     return
         // }

@@ -1,12 +1,16 @@
-var express = require('express')
-var router = express.Router()
-var userController = require('../../controllers').userController
+const express = require('express')
+const router = express.Router()
+const userController = require('../../controllers').userController
+const fileUpload = require('../../middlewaves').FileUpload
+const checkUserLogin = require('../../middlewaves').checkUserLogin
 
 router.post('/login', userController.login)
 
 router.get('/logout', userController.logout)
 
 router.post('/logon', userController.logon)
+
+router.post('/update-avatar', checkUserLogin, fileUpload.single('newavatar'), userController.findByIdAndUpdateAvatar)
 
 router.get('/replies/:id', userController.findAllReplies)
 

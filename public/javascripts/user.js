@@ -10,9 +10,8 @@ $(function ($) {
             var replies = repliesResponse.data
             var _temp = ''
             replies.forEach(function (_reply) {
-                _temp += '<a href="/reply/' + _reply._id + '" class="list-group-item">' + _reply.content + '</a>'
+                _temp += '<a href="/topic/' + _reply.topicId + '" class="list-group-item">' + _reply.content + '</a>'
             })
-            console.log(_temp)
             repliesHTML = '<div class="list-group">' + _temp + '</div>'
             $recentInfo.html(repliesHTML)
         }
@@ -25,7 +24,6 @@ $(function ($) {
                 _temp += '<a href="/topic/' + _topic._id + '" class="list-group-item">' + _topic.title + '</a>'
             })
             topicsHTML = '<div class="list-group">' + _temp + '</div>'
-            console.log(topicsHTML)
         }
     })
 
@@ -65,13 +63,46 @@ $(function ($) {
     recentUserIdList.forEach(function (_ele_user_id) {
         $.get('/user/only-find/' + _ele_user_id, function (_userInfoResponse) {
             if (_userInfoResponse.success) {
-                console.log('请求来访用户信息成功')
                 $recentVisitList.append('<a href="/user/' + _userInfoResponse.data.id + '"><img class="avatar-32 m-5" src="' + _userInfoResponse.data.avatar + '" title="' + _userInfoResponse.data.name + '"></a>')
-            } else {
-                console.log('请求来访用户信息失败')
             }
         })
     })
-    console.log(recentUserIdList)
+
+    $('.profile-heading-avatar').click(function () {
+        var $avatarSelf = $(this)
+        var $updateAvatarFiled = $('#updateAvatarField')
+        $updateAvatarFiled.change(function (_evt) {
+            var reader = new FileReader()
+            reader.onload = function (_evtLoad) {
+                // console.log(_evtLoad.target.result)
+                $avatarSelf.attr('src', _evtLoad.target.result)
+                // $(document.body).append('<form id="form_jfewo432fjew" class="hidden" method= "post" enctype= "multipart/form-data" ><input type="file" name="newavatar" value="' + $updateAvatarFiled.val() + '"></form >')
+                // $.post('/topic/test', { newavatar: _evt.target.result }, function (updateAvatarRes) {
+
+                // })
+                var $formJOSIDJFE = $('#form_jfewo432fjew')
+                var $updateAvatarForm = document.getElementById('updateAvatarForm')
+                var formDate = new FormData($formJOSIDJFE)
+                $updateAvatarForm.submit()
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '/topic/test',
+                //     data: formDate,
+                //     contentType: false,
+                //     processData: false
+                // })
+                //     .then(function () {
+                //         console.log('done')
+                //     }, function () {
+                //         console.log('error')
+                //     })
+                // $.post('/topic/test', formDate, function (updateAvatarRes) {
+                //     console.log(updateAvatarRes)
+                // })
+
+            }
+            reader.readAsDataURL(_evt.target.files[0])
+        }).click()
+    })
 
 })
