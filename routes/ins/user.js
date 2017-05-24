@@ -10,7 +10,14 @@ router.get('/logout', userController.logout)
 
 router.post('/logon', userController.logon)
 
-router.post('/update-avatar', checkUserLogin, fileUpload.single('newavatar'), userController.findByIdAndUpdateAvatar)
+// 所有 /update/* 操作都需要验证是否登录
+router.use('/update', checkUserLogin)
+
+router.post('/update/avatar', fileUpload.single('newavatar'), userController.findByIdAndUpdateAvatar)
+
+router.post('/update/name', userController.findByIdAndUpdateName)
+
+router.post('/update/say', userController.findIdAndUpdateSay)
 
 router.get('/replies/:id', userController.findAllReplies)
 

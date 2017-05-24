@@ -390,3 +390,42 @@ module.exports.findByIdAndUpdateAvatar = (req, res) => {
         return res.redirect('back')
     })
 }
+
+
+/**
+ * 修改用户 say
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findIdAndUpdateSay = (req, res) => {
+    UserModel.findByIdAndUpdate(req.session.user.id, {
+        $set: {
+            say: req.body.say
+        }
+    }, (err, updateSayRes) => {
+        debug('修改say属性结果：%O', updateSayRes)
+        if (req.xhr) {
+            return res.json({
+                success: !err,
+                data: updateSayRes.say
+            })
+        }
+        return res.redirect('back')
+    })
+}
+
+
+/**
+ * 修改用户 name
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findByIdAndUpdateName = (req, res) => {
+    UserModel.findByIdAndUpdate(req.session.user.id, {
+        $set: {
+            name: req.body.name,
+        }
+    }, (err, updateNameRes) => {
+        return res.redirect('back')
+    })
+}

@@ -105,4 +105,67 @@ $(function ($) {
         }).click()
     })
 
+    // 修改用户的 say 属性    
+    var $profileDesc = $('.profile-desc')
+    var $profileDescEdit = $profileDesc.next()
+    var $btnCommitUpdateSay = $('#btn-commit-update-say')
+    $('.profile-heading-desc-heading-title-edit').click(function () {
+        console.log('点击编辑言论')
+        $profileDesc.toggleClass('hidden')
+        $profileDescEdit.toggleClass('hidden')
+        $btnCommitUpdateSay.one('click', function () {
+            $.post('/user/update/say', {
+                say: $('#sayField').val()
+            }, function (updateSayResponse) {
+                if (updateSayResponse && updateSayResponse.success) {
+                    console.log(updateSayResponse)
+                    $profileDesc.text(updateSayResponse.data)
+                }
+                $profileDesc.toggleClass('hidden')
+                $profileDescEdit.toggleClass('hidden')
+            })
+        })
+    })
+
+    // $('#dragDiv').on('dragover', function (_evt) {
+    //     _evt.preventDefault()
+    //     console.log('dragover')
+    // }).on('dragenter', function (_evt) {
+    //     _evt.preventDefault()
+    //     console.log('dragenter')
+    // }).on('drop', function (_evt) {
+    //     _evt.preventDefault()
+    //     console.log('drop')
+    //     console.log(_evt)
+    //     console.log(_evt.getData())
+    // })
+    var $dragDiv = $('#dragDiv')
+    var d = $dragDiv[0]
+    d.addEventListener('dragover', function (_e) {
+        _e.preventDefault()
+    })
+    d.addEventListener('dragenter', function (_e) {
+        _e.preventDefault()
+    })
+    d.addEventListener('drop', function (_e) {
+        _e.preventDefault()
+        // console.log(_e.dataTransfer.getData('image/*'))
+        // _e.dataTransfer.files[0]
+        console.log(_e.dataTransfer.files)
+        // $dragDiv.append('<img src="' + _e.dataTransfer.files[0] + '" width="200" height="200">')
+        var data = new FormData()
+        data.append('newavatar', _e.dataTransfer.files[0])
+        // $.post('/user/update/avatar', data, function (_res) {
+        //     console.log(_res)
+        // })
+        var xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function (response) {
+            if (xhr.status == 200 && xhr.readyState == 4) {
+                console.log('呵呵')
+            }
+        }
+        xhr.open('post', '/user/update/avatar', true)
+        xhr.send(data)
+    })
+
 })

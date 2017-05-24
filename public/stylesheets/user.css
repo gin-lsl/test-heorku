@@ -21,3 +21,13 @@
 .panel-title {
   display: inline-block;
 }
+
+#sayField {
+  width: 400px;
+  height: 150px;
+}
+
+#dragDiv {
+  width: 300px;
+  height: 300px;
+}

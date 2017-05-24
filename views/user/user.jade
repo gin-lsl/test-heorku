@@ -7,6 +7,7 @@ block js
   script(src='/javascripts/user.js')
 
 block content
+  - var isMe = (currentUser && currentUser.id === userInfo.id)
   - if (userInfo)
     .profile
       span#user-id('data-user-id'=userInfo.id)
@@ -17,8 +18,8 @@ block content
               .profile-heading-avatar-warp
                 //- a(href='/user/#{userInfo.id}')
                 img.profile-heading-avatar.w100(src=userInfo.avatar ? userInfo.avatar : '/images/a.jpg', alt=userInfo.name)
-                - if (currentUser && currentUser.id === userInfo.id)
-                  form#updateAvatarForm.hidden(action='/user/update-avatar', enctype='multipart/form-data', method='POST')
+                - if (isMe)
+                  form#updateAvatarForm.hidden(action='/user/update/avatar', enctype='multipart/form-data', method='POST')
                     input#updateAvatarField(type='file', name='newavatar')
               .profile-heading-social
                 ul
@@ -35,10 +36,13 @@ block content
                 span.profile-heading-desc-heading-title.pull-right
                   span.profile-heading-desc-heading-title-min.glyphicon.glyphicon-minus
                   span.profile-heading-desc-heading-title-max.glyphicon.glyphicon-map-marker
-                  - if (currentUser)
+                  - if (isMe)
                     span.profile-heading-desc-heading-title-edit.glyphicon.glyphicon-edit(title='编辑个人信息', role='button')
               .profile-heading-desc-body.p-20
                 .profile-desc= userInfo.say ? userInfo.say : '这位同学什么也没有说...'
+                .profile-desc-edit.text-center.hidden.clearfix
+                  textarea#sayField(name="say", rows="5")
+                  button#btn-commit-update-say.btn.btn-default.pull-right 确定
       .profile-body.pt-40.row
         .profile-body-topics-or-replies.col-md-10
           .panel.panel-default
@@ -49,6 +53,7 @@ block content
                 button#btn-show-replies.btn.btn-default.btn-sm.active(type='button') 回复
             .panel-body
               .table.recent-info
+        #dragDiv
         .col-md-2
           .visit-info
             p(title='统计所有访问,包括游客') 访问人数: #{userInfo.visit ? userInfo.visit : 0}
