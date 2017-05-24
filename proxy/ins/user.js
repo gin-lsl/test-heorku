@@ -86,6 +86,9 @@ module.exports.findUserByIdAndReturnSafeFields = (userId, callback) => {
         if (err) {
             return callback(err);
         }
+        if (!findUserInfoRes) {
+            return callback(new Error('没有结果'))
+        }
         return callback(null, {
             id: findUserInfoRes._id,
             email: findUserInfoRes.email,

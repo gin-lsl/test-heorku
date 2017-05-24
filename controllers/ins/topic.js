@@ -1,4 +1,4 @@
-const { TopicModel, UserModel, ReplyModel } = require('../../models')
+const { TopicModel, UserModel, ReplyModel, CategoryModel } = require('../../models')
 const { UserProxy } = require('../../proxy')
 const async = require('async')
 
@@ -15,7 +15,60 @@ module.exports.showPost = (req, res) => {
     if (!req.session.user) {
         return res.status(302).redirect('/user/login')
     }
-    return render(null, 'topic/post', { currentUser: req.session.user }, res)
+    CategoryModel.find((err, findAllCategoryRes) => {
+        debug('返回的categories: %O', findAllCategoryRes)
+        return render(null, 'topic/post', {
+            currentUser: req.session.user,
+            categories: err ? null : findAllCategoryRes
+        }, res)
+    })
+}
+
+
+/**
+ * 保存topic
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.save = (req, res) => {
+    if (!req.session.user) {
+        return res.json({
+            success: false,
+            type: 0,
+            data: '没有登录'
+        })
+    }
+    let _body = req.body
+    let _title = _body.title
+    let _content = _body.content
+    let _category = _body.category
+    let _tags = _body.tags
+    let _userId = req.session.user.id
+
+    debug('请求体: %O', _body)
+    TopicModel.create({
+        title: _title,
+        content: _content,
+        category: _category,
+        postDateTime: new Date(),
+        tags: _tags,
+        userId: _userId
+    }, (err, _createTopicRes) => {
+        debug('插入topic文档结果')
+        debug('Err: %O', err)
+        debug('_createTopicRes: %O', _createTopicRes)
+        if (err) {
+            return res.redirect('back')
+        }
+        if (!_createTopicRes) {
+            return res.redirect('/')
+        }
+        if (_createTopicRes._id) {
+            return res.redirect('/topic/' + _createTopicRes._id)
+        }
+        return res.redirect('/')
+    })
 }
 
 

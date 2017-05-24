@@ -9,14 +9,36 @@ block stylesheets
 block content
   .post-container.mt-30
     .post-box
-      form.form#postTopic(role='form', action='/topic/post', method='POST')
+      form.form#postTopic(role='form', action='/topic/post', method='POST', enctype='multipart/form-data')
         .pull-left
           img.avatar-45(src='/images/a.jpg')
         .post-box-content.ml-60
             .form-group.m-0
-              input#titleField.form-control(name='title', type='text', require, size='30', placeholder='标题', autofocus='autofocus', aria-label='title', autocomplete='off')
+              input#titleField.form-control(name='title',
+                type='text',
+                require,
+                size='30',
+                placeholder='标题',
+                autofocus='autofocus',
+                aria-label='title',
+                autocomplete='off')
+            .form-group.m-0
+              label.control-label(for="categoryField") 分类
+              select#categoryField.form-control(name="category")
+                each _category in categories
+                  option(value=_category._id)=_category.name
+            .form-group.m-0
+              .preview-tags
+              label(for="tagsField") 标签
+              .input-group
+                input#tagsField.form-control(type="text", placeholder='还能添加5个标签')
+                span.add-tag.input-group-addon(role='button') +
             .form-group.m-0
               textarea#contentField.form-control(name="content", rows="10", placeholder='请遵守互联网精神')
               .info 请遵守互联网相关法律法规
+            .form-group.m-0
+              input#fileField.hidden(type="file", name='file')
+              img#preview-cover.text-center.open-select-file(role='button')
+              span.text-click-choose-img.open-select-file 添加话题的封面
             .form-group.clearfix.m-0
-              button#submit-topic.btn.btn-info.pull-right(type='button') 发布新话题
+              button#submit-topic.btn.btn-info.pull-right(type='submit') 发布新话题

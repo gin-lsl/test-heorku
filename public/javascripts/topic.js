@@ -156,7 +156,6 @@ $(function ($) {
                 }
             })
         }
-
     })
     //         }
     //     })
@@ -213,4 +212,114 @@ $(function ($) {
         .mouseout(function () {
             $(this).find('.pop-reply-info').removeClass('pop')
         })
+
+
+    var $fileField = $('#fileField')
+    var $previewCoverCanvas = $('#preview-cover-canvas')
+
+    $fileField.change(function (evt) {
+        console.log('文件字段发生改变')
+        var reader = new FileReader()
+        var $previewCover = $('#preview-cover')
+        reader.onload = function (_e) {
+            $('.text-click-choose-img').css('display', 'none')
+            $previewCover.attr('src', _e.target.result)
+            // $previewCover.css('background-image', 'url(' + _e.target.result + ')')
+            // var ctx = $previewCoverCanvas[0].getContext('2d')
+            // ctx.drawImage(evt.target.files[0], 0, 0)
+
+        }
+        console.log('%O', evt.target.files)
+        reader.readAsDataURL(evt.target.files[0])
+    })
+
+    // 点击弹出文件选择框    
+    $('.open-select-file').click(function () {
+        $fileField.click()
+    })
+
+    // 标签字段    
+    var $tagsField = $('#tagsField')
+    // 标签列表
+    var $previewTags = $('.preview-tags')
+    // 最大标签数
+    var tagCount = 5
+    // 标签内容，防止添加重复标签
+    var tagList = []
+
+    // 添加 tag
+    function addTag() {
+        var _tagsFieldVal = $tagsField.val().trim()
+        var _tagListLength = tagList.length >>> 0
+        console.log('_tagsFieldVal: ' + _tagsFieldVal + ', _tagListLength: ' + _tagListLength)
+        // if (tagCount <= 0 || _tagsFieldVal == '') {
+        //     return
+        // }
+        if (_tagsFieldVal == '' || _tagListLength >= 5) {
+            return
+        }
+        if (tagList.find(function (_ele) {
+            return _ele === _tagsFieldVal
+        })) {
+            $tagsField.val('')
+            return
+        }
+        tagList.push(_tagsFieldVal)
+        $previewTags.append('<span class="preview-tag"><span class="preview-tag-text">' + _tagsFieldVal + '</span><span class="preview-tag-close" role="button">&times;</span><input type="hidden" name="tag" value="' + _tagsFieldVal + '"></span>')
+        // tagCount--
+        // if (tagCount == 0) {
+        //     $tagsField.attr('disabled', true)
+        // }
+        if (tagList.length >= 5) {
+            $tagsField.attr('disabled', true)
+        }
+        $tagsField.attr('placeholder', '还能添加' + (tagCount - tagList.length >>> 0) + '个标签').val('')
+    }
+
+    // 防止表单字段回车提交表单
+    $('.form-control').keydown(function (_evt) {
+        if (_evt.which === 13) {
+            return false
+        }
+    })
+
+    // 回车添加 tag, 调用 addTag() 方法
+    $tagsField.keyup(function (_evt) {
+        _evt.preventDefault()
+        if (_evt.which === 13) {
+            addTag()
+        }
+    })
+    // 点击输入框组右侧按钮添加tag
+    $('.add-tag').click(function () {
+        addTag()
+    })
+
+    /*< ul class="ul" >
+            <ul>
+                <button class="btn">添加一个li</button>*/
+
+    // $('.btn').click(function () {
+    //     $ul.append('<li>我是li</li>')
+    // })
+
+    // var $ul = $('.ul')
+    // $ul.on('click', 'li', function () {
+    //     console.log('点击li')
+    // })
+
+    // 删除此条tag，不会被提交，并且从所有标签列表中删除此标签
+    $('.preview-tags').on('click', '.preview-tag-close', function (_evt) {
+        _evt.preventDefault()
+        var $self = $(this)
+        var _previewTagText = $self.prev('.preview-tag-text').text()
+        var foundIndex = tagList.findIndex(function (_ele) {
+            return _ele == _previewTagText
+        })
+        tagList.splice(foundIndex, 1)
+        $self.parents('.preview-tag').remove()
+        // tagCount++
+        $tagsField.attr('disabled', false).attr('placeholder', '还能添加' + (tagCount - tagList.length >>> 0) + '个标签')
+    })
+
 })

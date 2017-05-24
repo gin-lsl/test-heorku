@@ -217,3 +217,31 @@ textarea {
 .pop {
   display: inline-block!important;
 }
+
+.text-click-choose-img {
+  line-height: 150px;
+  position: relative;
+  left: -150px;
+  cursor: pointer;
+}
+
+.preview-tags {
+  height: 40px;
+}
+
+.preview-tag {
+  display: inline-block;
+  height: 30px;
+  line-height: 30px;
+  min-width: 50px;
+  text-align: center;
+  margin-right: 5px;
+  padding: 0 5px;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+}
+
+.preview-tag-close {
+  display: inline-block;
+  width: 20px;
+}
