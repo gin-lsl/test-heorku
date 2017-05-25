@@ -13,6 +13,8 @@ router.post('/logon', userController.logon)
 // 所有 /update/* 操作都需要验证是否登录
 router.use('/update', checkUserLogin)
 
+router.get('/update/avatar/reset', userController.findByIdAndResetAvatarToDefault)
+
 router.post('/update/avatar', fileUpload.single('newavatar'), userController.findByIdAndUpdateAvatar)
 
 router.post('/update/name', userController.findByIdAndUpdateName)

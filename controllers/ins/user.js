@@ -1,6 +1,7 @@
 const { UserModel } = require('../../models')
 const { UserProxy, TopicProxy, ReplyProxy } = require('../../proxy')
 const regex_tools = require('../../utils').regex_tools
+const gravatar = require('gravatar')
 const debug = require('debug')('my-app:controllers:ins:user')
 
 /**
@@ -59,19 +60,19 @@ module.exports.logon = (req, res) => {
         }
         UserProxy.createNewUserPromise(email, password).then(_dataCreateUserWhenLogon => {
             let __user = {
-                    id: _dataCreateUserWhenLogon._id,
-                    email: _dataCreateUserWhenLogon.email,
-                    name: _dataCreateUserWhenLogon.name,
-                    gender: _dataCreateUserWhenLogon.gender,
-                    lv: _dataCreateUserWhenLogon.lv,
-                    say: _dataCreateUserWhenLogon.say,
-                    avatar: _dataCreateUserWhenLogon.avatar,
-                    follows: _dataCreateUserWhenLogon.follows,
-                    hisFollows: _dataCreateUserWhenLogon.hisFollows,
-                    recentVisits: _dataCreateUserWhenLogon.recentVisits,
-                    logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
-                    lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
-                }
+                id: _dataCreateUserWhenLogon._id,
+                email: _dataCreateUserWhenLogon.email,
+                name: _dataCreateUserWhenLogon.name,
+                gender: _dataCreateUserWhenLogon.gender,
+                lv: _dataCreateUserWhenLogon.lv,
+                say: _dataCreateUserWhenLogon.say,
+                avatar: _dataCreateUserWhenLogon.avatar,
+                follows: _dataCreateUserWhenLogon.follows,
+                hisFollows: _dataCreateUserWhenLogon.hisFollows,
+                recentVisits: _dataCreateUserWhenLogon.recentVisits,
+                logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
+                lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
+            }
             req.session.user = __user
             debug('注册返回数据: %O', __user)
             resJson(res, __user, true)
@@ -181,8 +182,9 @@ module.exports.findByIdAndUpdateVisitInfomation = (req, res) => {
             })
         })
         .catch(error => {
+            debug('获取用户信息，捕获到错误发生: %O', error)
             return res.render('user/user', {
-                userInfo: someDataRes,
+                userInfo: null,
                 currentUser: req.session.user
             })
         })
@@ -376,6 +378,30 @@ module.exports.followUser = (req, res) => {
 
 
 /**
+ * 重置用户头像到默认头像（gravatar生成的头像）
+ * 
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.findByIdAndResetAvatarToDefault = (req, res) => {
+    debug('进入重置用户头像处理器')
+    let _email = req.session.user.email
+    _email = gravatar.url(_email)
+    debug('生成的头像地址：%s', _email)
+    UserModel.findByIdAndUpdate(req.session.user.id, {
+        $set: {
+            avatar: _email
+        }
+    }, (err, resetAvatarToDefault) => {
+        return res.json({
+            success: !err,
+            data: err ? null : _email
+        })
+    })
+}
+
+
+/**
  * 修改用户头像
  * @param {Request} req
  * @param {Response} res
@@ -387,6 +413,14 @@ module.exports.findByIdAndUpdateAvatar = (req, res) => {
         }
     }, (err, updateAvatarRes) => {
         debug('更新头像结果: Err: %O, updateAvatarRes: %O', err, updateAvatarRes)
+        debug('是否是xhr请求: ' + req.xhr)
+        if (req.xhr) {
+            debug('完成并且成功')
+            return res.json({
+                success: true,
+                data: '/images/covers/' + req.coverImageName
+            })
+        }
         return res.redirect('back')
     })
 }

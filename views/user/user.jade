@@ -16,9 +16,10 @@ block content
           .row
             .col-md-2.col-sm-3.col-xs-3
               .profile-heading-avatar-warp
-                //- a(href='/user/#{userInfo.id}')
                 img.profile-heading-avatar.w100(src=userInfo.avatar ? userInfo.avatar : '/images/a.jpg', alt=userInfo.name)
                 - if (isMe)
+                  #hint-click-me-to-change-avatar 拖拽或点击更改头像
+                  #reset-to-default-avatar(title='恢复默认头像', role='button') &times;
                   form#updateAvatarForm.hidden(action='/user/update/avatar', enctype='multipart/form-data', method='POST')
                     input#updateAvatarField(type='file', name='newavatar')
               .profile-heading-social
@@ -42,7 +43,9 @@ block content
                 .profile-desc= userInfo.say ? userInfo.say : '这位同学什么也没有说...'
                 .profile-desc-edit.text-center.hidden.clearfix
                   textarea#sayField(name="say", rows="5")
-                  button#btn-commit-update-say.btn.btn-default.pull-right 确定
+                  .pull-right
+                    button#btn-commit-update-say.btn.btn-default 确定
+                    button#btn-cancel-update-say.btn.btn-default 取消
       .profile-body.pt-40.row
         .profile-body-topics-or-replies.col-md-10
           .panel.panel-default
@@ -53,7 +56,6 @@ block content
                 button#btn-show-replies.btn.btn-default.btn-sm.active(type='button') 回复
             .panel-body
               .table.recent-info
-        #dragDiv
         .col-md-2
           .visit-info
             p(title='统计所有访问,包括游客') 访问人数: #{userInfo.visit ? userInfo.visit : 0}

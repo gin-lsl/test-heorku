@@ -68,47 +68,82 @@ $(function ($) {
         })
     })
 
-    $('.profile-heading-avatar').click(function () {
-        var $avatarSelf = $(this)
-        var $updateAvatarFiled = $('#updateAvatarField')
-        $updateAvatarFiled.change(function (_evt) {
-            var reader = new FileReader()
-            reader.onload = function (_evtLoad) {
-                // console.log(_evtLoad.target.result)
-                $avatarSelf.attr('src', _evtLoad.target.result)
-                // $(document.body).append('<form id="form_jfewo432fjew" class="hidden" method= "post" enctype= "multipart/form-data" ><input type="file" name="newavatar" value="' + $updateAvatarFiled.val() + '"></form >')
-                // $.post('/topic/test', { newavatar: _evt.target.result }, function (updateAvatarRes) {
-
-                // })
-                var $formJOSIDJFE = $('#form_jfewo432fjew')
-                var $updateAvatarForm = document.getElementById('updateAvatarForm')
-                var formDate = new FormData($formJOSIDJFE)
-                $updateAvatarForm.submit()
-                // $.ajax({
-                //     type: 'POST',
-                //     url: '/topic/test',
-                //     data: formDate,
-                //     contentType: false,
-                //     processData: false
-                // })
-                //     .then(function () {
-                //         console.log('done')
-                //     }, function () {
-                //         console.log('error')
-                //     })
-                // $.post('/topic/test', formDate, function (updateAvatarRes) {
-                //     console.log(updateAvatarRes)
-                // })
-
+    var $updateAvatarFiled = $('#updateAvatarField')
+    var $profileHeadingAvatar = $('.profile-heading-avatar')
+    $('.profile-heading-avatar-warp')
+        .on('dragenter dragover', function (_evtProfileHeadingAvatarWarpDragenterAndDragover) {
+            _evtProfileHeadingAvatarWarpDragenterAndDragover.preventDefault()
+        })
+        .on('drop', function (_evtProfileHeadingAvatarWarpDrop) {
+            _evtProfileHeadingAvatarWarpDrop.preventDefault()
+            var formData = new FormData()
+            var xhr = new XMLHttpRequest()
+            // TODO: 这里直接使用的是原生的 XMLHttpRequest 对象
+            // 如果可以的话，为了统一可以尝试改为JQuery库的方式
+            formData.append('newavatar', _evtProfileHeadingAvatarWarpDrop.originalEvent.dataTransfer.files[0])
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var responseJSON = JSON.parse(xhr.response)
+                    if (responseJSON && responseJSON.success) {
+                        // 更新头像地址
+                        $profileHeadingAvatar.attr('src', responseJSON.data)
+                    }
+                }
             }
-            reader.readAsDataURL(_evt.target.files[0])
-        }).click()
-    })
+            xhr.open('POST', '/user/update/avatar', true)
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+            xhr.send(formData)
+        })
+        .click(function (_evtProfileHeadingAvatarWarpClick) {
+            // _evtProfileHeadingAvatarWarpClick.preventDefault()
+            var $avatarSelf = $(this)
+            console.log('here')
+            $updateAvatarFiled
+                .change(function (_evt) {
+                    var reader = new FileReader()
+                    reader.onload = function (_evtLoad) {
+                        // console.log(_evtLoad.target.result)
+                        $avatarSelf.attr('src', _evtLoad.target.result)
+                        // $(document.body).append('<form id="form_jfewo432fjew" class="hidden"
+                        // method = "post" enctype= "multipart/form-data" > <input type="file"
+                        // name = "newavatar" value= "' + $updateAvatarFiled.val() + '" ></form > ')
+                        // $.post('/topic/test', { newavatar: _evt.target.result }, function (updateAvatarRes) {
+                        // })
+                        var $formJOSIDJFE = $('#form_jfewo432fjew')
+                        var $updateAvatarForm = document.getElementById('updateAvatarForm')
+                        var formDate = new FormData($formJOSIDJFE)
+                        $updateAvatarForm.submit()
+                        // $.ajax({
+                        //     type: 'POST',
+                        //     url: '/topic/test',
+                        //     data: formDate,
+                        //     contentType: false,
+                        //     processData: false
+                        // })
+                        //     .then(function () {
+                        //         console.log('done')
+                        //     }, function () {
+                        //         console.log('error')
+                        //     })
+                        // $.post('/topic/test', formDate, function (updateAvatarRes) {
+                        //     console.log(updateAvatarRes)
+                        // })
+
+                    }
+                    reader.readAsDataURL(_evt.target.files[0])
+                })
+                .click(function (_evtUpdateAvatarFieldClick) {
+                    // 组织事件冒泡，否则会抛出栈溢出异常
+                    _evtUpdateAvatarFieldClick.stopPropagation()
+                })
+                .click()
+        })
 
     // 修改用户的 say 属性    
     var $profileDesc = $('.profile-desc')
     var $profileDescEdit = $profileDesc.next()
     var $btnCommitUpdateSay = $('#btn-commit-update-say')
+    var $btnCancelUpdateSay = $('#btn-cancel-update-say')
     $('.profile-heading-desc-heading-title-edit').click(function () {
         console.log('点击编辑言论')
         $profileDesc.toggleClass('hidden')
@@ -126,46 +161,19 @@ $(function ($) {
             })
         })
     })
+    $btnCancelUpdateSay.click(function () {
+        $profileDesc.removeClass('hidden')
+        $profileDescEdit.addClass('hidden')
+    })
 
-    // $('#dragDiv').on('dragover', function (_evt) {
-    //     _evt.preventDefault()
-    //     console.log('dragover')
-    // }).on('dragenter', function (_evt) {
-    //     _evt.preventDefault()
-    //     console.log('dragenter')
-    // }).on('drop', function (_evt) {
-    //     _evt.preventDefault()
-    //     console.log('drop')
-    //     console.log(_evt)
-    //     console.log(_evt.getData())
-    // })
-    var $dragDiv = $('#dragDiv')
-    var d = $dragDiv[0]
-    d.addEventListener('dragover', function (_e) {
-        _e.preventDefault()
-    })
-    d.addEventListener('dragenter', function (_e) {
-        _e.preventDefault()
-    })
-    d.addEventListener('drop', function (_e) {
-        _e.preventDefault()
-        // console.log(_e.dataTransfer.getData('image/*'))
-        // _e.dataTransfer.files[0]
-        console.log(_e.dataTransfer.files)
-        // $dragDiv.append('<img src="' + _e.dataTransfer.files[0] + '" width="200" height="200">')
-        var data = new FormData()
-        data.append('newavatar', _e.dataTransfer.files[0])
-        // $.post('/user/update/avatar', data, function (_res) {
-        //     console.log(_res)
-        // })
-        var xhr = new XMLHttpRequest()
-        xhr.onreadystatechange = function (response) {
-            if (xhr.status == 200 && xhr.readyState == 4) {
-                console.log('呵呵')
+    // 重置头像为默认头像    
+    $('#reset-to-default-avatar').click(function (_evtResetAvatarClick) {
+        _evtResetAvatarClick.stopPropagation()
+        $.get('/user/update/avatar/reset', function (updateAvatarResetRes) {
+            if (updateAvatarResetRes && updateAvatarResetRes.success) {
+                // 更新成功
+                $profileHeadingAvatar.attr('src', updateAvatarResetRes.data)
             }
-        }
-        xhr.open('post', '/user/update/avatar', true)
-        xhr.send(data)
+        })
     })
-
 })
