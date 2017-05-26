@@ -138,27 +138,49 @@ $(function ($) {
                 })
                 .click()
         })
+    
+    // 修改用户名
+    var $nameField = $('#nameField')
+    $nameField.keyup(function (_evtNameFieldKeyUp) {
+        if (_evtNameFieldKeyUp.which === 13) {
+            var nameFieldVal = $nameField.val()
+            if (!nameFieldVal || nameFieldVal == '') {
+                $nameField.css('border-bottom-color', 'red')
+                return
+            }
+            $.post('/user/update/name', { name: $nameField.val() }, function (updateNameRes) {
+                console.log('修改用户名结果: %O', updateNameRes)
+                if (updateNameRes && updateNameRes.success) {
+                    console.log('修改用户名成功')
+                    $nameField.css('border-bottom-color', 'green')
+                    setTimeout(function() {
+                        $nameField.removeAttr('style')
+                    }, 1000);
+                }
+            })
+        }
+    })
 
-    // 修改用户的 say 属性    
+    // 修改用户的 say 属性
     var $profileDesc = $('.profile-desc')
     var $profileDescEdit = $profileDesc.next()
     var $btnCommitUpdateSay = $('#btn-commit-update-say')
     var $btnCancelUpdateSay = $('#btn-cancel-update-say')
     $('.profile-heading-desc-heading-title-edit').click(function () {
-        console.log('点击编辑言论')
         $profileDesc.toggleClass('hidden')
         $profileDescEdit.toggleClass('hidden')
-        $btnCommitUpdateSay.one('click', function () {
-            $.post('/user/update/say', {
-                say: $('#sayField').val()
-            }, function (updateSayResponse) {
-                if (updateSayResponse && updateSayResponse.success) {
-                    console.log(updateSayResponse)
-                    $profileDesc.text(updateSayResponse.data)
-                }
-                $profileDesc.toggleClass('hidden')
-                $profileDescEdit.toggleClass('hidden')
-            })
+        $('#sayField').val($profileDesc.text()).focus().select()
+    })
+    $btnCommitUpdateSay.click(function () {
+        $.post('/user/update/say', {
+            say: $('#sayField').val()
+        }, function (updateSayResponse) {
+            if (updateSayResponse && updateSayResponse.success) {
+                console.log(updateSayResponse)
+                $profileDesc.text(updateSayResponse.data)
+            }
+            $profileDesc.toggleClass('hidden')
+            $profileDescEdit.toggleClass('hidden')
         })
     })
     $btnCancelUpdateSay.click(function () {

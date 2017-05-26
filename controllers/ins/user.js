@@ -2,6 +2,7 @@ const { UserModel } = require('../../models')
 const { UserProxy, TopicProxy, ReplyProxy } = require('../../proxy')
 const regex_tools = require('../../utils').regex_tools
 const gravatar = require('gravatar')
+const fs = require('fs')
 const debug = require('debug')('my-app:controllers:ins:user')
 
 /**
@@ -414,6 +415,11 @@ module.exports.findByIdAndUpdateAvatar = (req, res) => {
     }, (err, updateAvatarRes) => {
         debug('更新头像结果: Err: %O, updateAvatarRes: %O', err, updateAvatarRes)
         debug('是否是xhr请求: ' + req.xhr)
+        fs.unlink('public' + updateAvatarRes.avatar, unlinkErr => {
+            if (unlinkErr) {
+                debug('删除文件出错 err: %O', unlinkErr)
+            }
+        })
         if (req.xhr) {
             debug('完成并且成功')
             return res.json({
@@ -431,7 +437,7 @@ module.exports.findByIdAndUpdateAvatar = (req, res) => {
  * @param {Request} req
  * @param {Response} res
  */
-module.exports.findIdAndUpdateSay = (req, res) => {
+module.exports.findByIdAndUpdateSay = (req, res) => {
     UserModel.findByIdAndUpdate(req.session.user.id, {
         $set: {
             say: req.body.say
@@ -441,7 +447,7 @@ module.exports.findIdAndUpdateSay = (req, res) => {
         if (req.xhr) {
             return res.json({
                 success: !err,
-                data: updateSayRes.say
+                data: req.body.say
             })
         }
         return res.redirect('back')
@@ -460,6 +466,12 @@ module.exports.findByIdAndUpdateName = (req, res) => {
             name: req.body.name,
         }
     }, (err, updateNameRes) => {
+        if (req.xhr) {
+            return res.json({
+                success: !err,
+                data: req.body.name
+            })
+        }
         return res.redirect('back')
     })
 }

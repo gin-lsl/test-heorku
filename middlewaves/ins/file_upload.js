@@ -9,7 +9,9 @@ const storage = multer.diskStorage({
     },
     // 文件名
     filename: (req, file, callback) => {
-        let filename = Date.now() + file.originalname
+        // 需要注意防止文件名太长
+        let filename = Date.now() + file.originalname.substr(-15)
+        // filename = filename.substr(-25)
         debug('将保存的文件名: %O', filename)
         req.coverImageName = filename
         callback(null, filename)

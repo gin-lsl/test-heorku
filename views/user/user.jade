@@ -29,16 +29,17 @@ block content
                   li
                     a.icon-sn-github
             .col-md-5.col-sm-9.col-xs-9
-              h2.profile-heading-name= userInfo.name
+              - if (!isMe)
+                h2.profile-heading-name= userInfo.name
+              - else
+                .profile-heading-name-edit-warp
+                  input#nameField(name=name, value=userInfo.name, placeholder='回车提交', title='修改用户名')
               .profile-heading-award
               .profile-heading-other
             .col-md-5.col-sm-12.col-xs-12.profile-heading-desc
               .profile-heading-desc-heading.clearfix
-                span.profile-heading-desc-heading-title.pull-right
-                  span.profile-heading-desc-heading-title-min.glyphicon.glyphicon-minus
-                  span.profile-heading-desc-heading-title-max.glyphicon.glyphicon-map-marker
-                  - if (isMe)
-                    span.profile-heading-desc-heading-title-edit.glyphicon.glyphicon-edit(title='编辑个人信息', role='button')
+                - if (isMe)
+                  span.profile-heading-desc-heading-title-edit.pull-right.glyphicon.glyphicon-edit(title='编辑想说的话', role='button')
               .profile-heading-desc-body.p-20
                 .profile-desc= userInfo.say ? userInfo.say : '这位同学什么也没有说...'
                 .profile-desc-edit.text-center.hidden.clearfix

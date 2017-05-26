@@ -19,7 +19,8 @@ router.post('/update/avatar', fileUpload.single('newavatar'), userController.fin
 
 router.post('/update/name', userController.findByIdAndUpdateName)
 
-router.post('/update/say', userController.findIdAndUpdateSay)
+router.post('/update/say', userController.findByIdAndUpdateSay)
+
 
 router.get('/replies/:id', userController.findAllReplies)
 
