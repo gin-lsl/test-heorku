@@ -42,6 +42,8 @@ router.get('/collect/:tid', topic.collect)
 
 router.get('/collect/cancel/:tid', topic.cancelCollect)
 
+router.get('/count', topic.count)
+
 router.get('/:tid', topic.findById)
 
 

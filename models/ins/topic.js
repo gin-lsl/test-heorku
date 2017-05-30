@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
 var TopicSchema = mongoose.Schema({
     title: String,
     content: String,
-    category: String,
+    category: Number,
     tags: [String],
     postDateTime: Date,
     visit: Number,

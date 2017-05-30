@@ -293,4 +293,38 @@ $(function ($) {
             window.location.href = '/?categoryId=' + _categoryId
         }
     })
+
+    // 分页    
+    var _paginationLis = ''
+    var $pagination = $('.pagination')
+    var $prevA = $pagination.find('a.prev')
+    var $nextA = $pagination.find('a.next')
+    var _matchSearchs = window.location.search.match(/([a-zA-Z]+)=(\d+)/g)
+    var searchObj = {}
+    if (_matchSearchs != null) {
+        for (var _i = 0; _i < _matchSearchs.length; _i++) {
+            var _ele = _matchSearchs[_i].split('=')
+            searchObj[_ele[0]] = _ele[1]
+        }
+    }
+    var ___url = '?'
+    if (searchObj.categoryId) {
+        ___url += 'categoryId=' + searchObj.categoryId + '&page='
+    } else {
+        ___url += 'page='
+    }
+    $.get('/topic/count', searchObj.categoryId ? { categoryId: searchObj.categoryId } : null, function (_topicCountRes) {
+        var _pageCount = Math.ceil((_topicCountRes.data || 0) / 10)
+        var _currentPageValue = searchObj.page || 1
+        if (_currentPageValue != null && (+_currentPageValue) > 1) {
+            $prevA.attr('href', ___url + ((+_currentPageValue) - 1))
+        }
+        if (_currentPageValue != null && (+_currentPageValue) < _pageCount) {
+            $nextA.attr('href', ___url + ((+_currentPageValue) + 1))
+        }
+        for (var _i = 0; _i < _pageCount; _i++) {
+            _paginationLis += '<li class="' + ((_currentPageValue == _i + 1) ? 'active' : '') + '"><a href="' + ___url + (_i + 1) + '">' + (_i + 1) + '</a></li>'
+        }
+        $pagination.children('.prev').after(_paginationLis)
+    })
 })

@@ -81,10 +81,19 @@ module.exports.save = (req, res) => {
  * @param {Response} res
  */
 module.exports.list = (req, res) => {
+    // 分类id
     let _categoryId = req.query.categoryId
-    debug('categoryId: %O', _categoryId)
+    // 页码
+    let _page = req.query.page || 1
+    // 每页显示数量
+    let _pageCount = req.query.pageCount || 10
+    debug('categoryId: %O, page: %s', _categoryId, _page)
     let _findCondition = _categoryId === undefined ? {} : { category: _categoryId }
-    TopicModel.find(_findCondition, (err, topics) => {
+    let options = {
+        skip: (_page - 1) * _pageCount,
+        limit: _pageCount
+    }
+    TopicModel.find(_findCondition, null, options, (err, topics) => {
         async.each(topics, (_topic, next) => {
             _topic.shortContent = _topic.content.slice(0, 5)
             _topic.shortPostDateTime = getShortDateTime(_topic.postDateTime)
@@ -110,6 +119,22 @@ module.exports.list = (req, res) => {
         })
     })
 }
+
+
+/**
+ * 获取全部或某个分类的帖子的个数
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.count = (req, res) => {
+    let _categoryId = req.query.categoryId
+    let _findCondition = _categoryId === undefined ? {} : { category: _categoryId }
+    TopicModel.count(_findCondition, (err, _countRes) => {
+        res.json({ success: !err, data: _countRes })
+    })
+}
+
 
 /**
  * 某个帖子的详情
@@ -147,6 +172,9 @@ module.exports.findById = (req, res) => {
     ], (err, topic) => {
         debug('所以请求以及完成, 是否发生错误: %O', err)
         debug('所以请求以及完成, 查看结果: %O', topic)
+        if (err || topic === undefined) {
+            return render('没有找到结果，请检查路径是否正确', '', null, res)
+        }
         return render(err, 'topic/topic', {
             topic: topic,
             replies: topic.replies,
