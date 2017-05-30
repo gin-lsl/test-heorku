@@ -185,3 +185,20 @@ ul {
   height: 150px;
   border: 3px solid lightgrey;
 }
+
+#category-list {
+  position: absolute;
+  z-index: 10;
+  background-color: white;
+  padding: 10px 0;
+}
+
+#category-list li {
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+}
+
+#category-list li:hover {
+  background-color: #E6E6E6;
+}

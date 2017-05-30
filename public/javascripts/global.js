@@ -28,7 +28,7 @@ $(function ($) {
         }
     }
 
-        // 添加对Array.prototype.findIndex() 方法的支持    
+    // 添加对Array.prototype.findIndex() 方法的支持    
     if (!Array.prototype.findIndex) {
         /**
          * @param {function(any)} predicate
@@ -54,6 +54,15 @@ $(function ($) {
             }
             return -1
         }
+    }
+
+    $.getUrlParam = function (name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&*)(&|$)')
+        var r = window.location.search.substr(1).match(reg)
+        if (r != null) {
+            return unescape(r[2])
+        }
+        return null
     }
 
     // 初始化变量    
@@ -246,6 +255,42 @@ $(function ($) {
         var selfDataSrc = $self.data('src')
         if (selfDataSrc && selfDataSrc != '') {
             $self.attr('src', selfDataSrc)
+        }
+    })
+
+    // 加载分类    
+    var $showCategories = $('#show-categories')
+    var $categoryList = $('#category-list')
+    $showCategories.hover(function () {
+        $categoryList.toggleClass('hidden')
+    })
+    $.get('/category/all', function (findCategoryAllRes) {
+        if (findCategoryAllRes && findCategoryAllRes.success) {
+            var _data = findCategoryAllRes.data
+            var _tempHTML = ''
+            if (Array.isArray(_data)) {
+                $.each(_data, function (_index, _ele) {
+                    _tempHTML += '<li data-id="' + _ele._id + '">' + _ele.name + '</li>'
+                })
+                $categoryList.append(_tempHTML)
+                var _cid = window.localStorage.getItem('categoryId')
+                var _categoryObj = _data.find(function (_ele) {
+                    return _ele._id == _cid
+                })
+                _categoryObj = _categoryObj ? _categoryObj.name : '全部'
+                $('.breadcrumb .active').text(_categoryObj)
+            }
+        }
+    })
+    $categoryList.on('click', 'li', function (_evtCategoryClick) {
+        console.log('点击了分类')
+        var _categoryId = $(this).data('id')
+        console.log('categoryId: ' + _categoryId)
+        localStorage.setItem('categoryId', _categoryId)
+        if (_categoryId === undefined) {
+            window.location.href = '/'
+        } else {
+            window.location.href = '/?categoryId=' + _categoryId
         }
     })
 })

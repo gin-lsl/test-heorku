@@ -62,14 +62,15 @@ module.exports.logon = (req, res) => {
         UserProxy.createNewUserPromise(email, password).then(_dataCreateUserWhenLogon => {
             let __user = {
                 id: _dataCreateUserWhenLogon._id,
-                email: _dataCreateUserWhenLogon.email,
-                name: _dataCreateUserWhenLogon.name,
-                gender: _dataCreateUserWhenLogon.gender,
                 lv: _dataCreateUserWhenLogon.lv,
                 say: _dataCreateUserWhenLogon.say,
+                name: _dataCreateUserWhenLogon.name,
+                email: _dataCreateUserWhenLogon.email,
+                gender: _dataCreateUserWhenLogon.gender,
                 avatar: _dataCreateUserWhenLogon.avatar,
                 follows: _dataCreateUserWhenLogon.follows,
                 hisFollows: _dataCreateUserWhenLogon.hisFollows,
+                collections: _dataCreateUserWhenLogon.collections,
                 recentVisits: _dataCreateUserWhenLogon.recentVisits,
                 logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
                 lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
@@ -108,12 +109,13 @@ module.exports.login = (req, res) => {
 
                 let __user = {
                     id: user._id,
-                    email: user.email,
-                    name: user.name,
-                    gender: user.gender,
                     lv: user.lv,
                     say: user.say,
+                    name: user.name,
+                    email: user.email,
+                    gender: user.gender,
                     avatar: user.avatar,
+                    collections: user.collections
                 }
                 req.session.user = __user
                 if (isXhr) {

@@ -76,9 +76,15 @@ module.exports.save = (req, res) => {
 
 /**
  * 所有帖子
+ * 
+ * @param {Request} req
+ * @param {Response} res
  */
 module.exports.list = (req, res) => {
-    TopicModel.find((err, topics) => {
+    let _categoryId = req.query.categoryId
+    debug('categoryId: %O', _categoryId)
+    let _findCondition = _categoryId === undefined ? {} : { category: _categoryId }
+    TopicModel.find(_findCondition, (err, topics) => {
         async.each(topics, (_topic, next) => {
             _topic.shortContent = _topic.content.slice(0, 5)
             _topic.shortPostDateTime = getShortDateTime(_topic.postDateTime)
@@ -87,6 +93,15 @@ module.exports.list = (req, res) => {
                 next(err, _user)
             })
         }, err => {
+            if (req.xhr) {
+                return res.json({
+                    success: !err,
+                    data: {
+                        topics: topics,
+                        currentUser: req.session.user
+                    }
+                })
+            }
             render(err, 'topic/topics-list', {
                 topics: topics,
                 title: '全部帖子',
@@ -139,6 +154,52 @@ module.exports.findById = (req, res) => {
         }, res)
     })
 }
+
+
+/**
+ * 收藏topic
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.collect = (req, res) => {
+    debug('进入处理器 收藏帖子')
+    UserProxy.collectOrCancel(req.session.user.id, req.params.tid, true, (err, collectRes) => {
+        debug('数据处理结束，返回结果 Err: %O, collectRes: %O', err, collectRes)
+        return res.json({
+            success: !err,
+            data: collectRes
+        })
+    })
+    // UserModel.findByIdAndUpdate(req.session.user.id, {
+    //     $push: {
+    //         collections: req.params.tid
+    //     }
+    // }, (err, updateCollectionsRes) => {
+    //     debug('收藏帖子返回结果: %O', updateCollectionsRes)
+    //     return res.json({
+    //         success: !err,
+    //         data: updateCollectionsRes
+    //     })
+    // })
+}
+
+
+/**
+ * 取消收藏
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.cancelCollect = (req, res) => {
+    debug('进入处理器 取消收藏')
+    UserProxy.collectOrCancel(req.session.user.id, req.params.tid, false, (err, cancelRes) => {
+        debug('数据处理结束，返回结果 Err: %O, cancelRes: %O', err, cancelRes)
+        return res.json({
+            success: !err,
+            data: cancelRes
+        })
+    })
+}
+
 
 /**
  * 渲染页面

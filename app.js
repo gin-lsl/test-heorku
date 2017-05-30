@@ -7,6 +7,7 @@ var logger = require('morgan')
 var cookieParser = require('cookie-parser')
 var expressSession = require('express-session')
 var bodyParser = require('body-parser')
+const cors = require('cors')
 const MongoStore = require('connect-mongo')(expressSession)
 const mongoConnConfig = require('./configs/mongodb_config').connStr
 var debug = require('debug')('my-app:app')
@@ -24,6 +25,7 @@ var app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 
+app.use(cors())
 
 // 引入 domain 中间件,需要在所以的中间件和路由之前引入,
 // 所以的请求都在一个独立的 domain 中

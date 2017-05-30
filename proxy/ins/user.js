@@ -104,3 +104,33 @@ module.exports.findUserByIdAndReturnSafeFields = (userId, callback) => {
         })
     })
 }
+
+
+/**
+ * 收藏topic或者取消收藏
+ * @param {string} userId
+ * @param {string} topicId
+ * @param {boolean} isCollect
+ * @param {function(Error, *)} callback
+ */
+module.exports.collectOrCancel = (userId, topicId, isCollect, callback) => {
+    debug('收藏或取消收藏: ' + isCollect)
+    let _userQuery = UserModel.findById(userId)
+    if (isCollect) {
+        debug('执行收藏操作')
+        _userQuery.update({
+            $push: {
+                collections: topicId
+            }
+        }).exec(callback)
+    } else {
+        debug('执行取消收藏操作')
+        _userQuery.where({
+            collections: topicId
+        }).update({
+            $pull: {
+                collections: topicId
+            }
+        }).exec(callback)
+    }
+}

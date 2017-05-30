@@ -181,23 +181,27 @@ $(function ($) {
             var _username = $($replies_sectionList[foundReplyIndex]).find('.comment-top a').text()
             var $_ele = $(_ele)
             var popDiv = '<div class="pop-reply-info"><p>@' + _username + ' 说：</p><p>' + replyList[foundReplyIndex].content + '</p></div>'
-            $_ele.html('<span class="show-pop"><span>回复给：</span><a class="reply-name-pop-comment-content" href="/user/'
+            $_ele.html('<div class="show-pop"><span>回复给：</span><a class="reply-name-pop-comment-content" href="/user/'
                 + replyList[foundReplyIndex].userId
                 + '">@'
                 + $_ele.text()
                 + _username
-                + '</a>' + popDiv + '<span class="hint-lightgrey"> 鼠标移动到这里显示对话</span></span>')
+                + '</a>' + popDiv + '<span class="hint-lightgrey" role="button"> 点击显示对话内容</span></div>')
         }
     })
 
-    $('.show-pop')
-        .mouseover(function (evt) {
-            // 控制显示回复信息的div位置，此div为fixed定位
-            $(this).find('.pop-reply-info').addClass('pop').offset({ top: evt.pageY, left: evt.pageX + 10 })
-        })
-        .mouseout(function () {
-            $(this).find('.pop-reply-info').removeClass('pop')
-        })
+    // $('.show-pop')
+    //     .mouseover(function (evt) {
+    //         // 控制显示回复信息的div位置，此div为fixed定位
+    //         $(this).find('.pop-reply-info').addClass('pop').offset({ top: evt.pageY, left: evt.pageX + 5 })
+    //     })
+    //     .mouseout(function () {
+    //         $(this).find('.pop-reply-info').removeClass('pop')
+    //     })
+
+    $('.hint-lightgrey').click(function () {
+        $(this).prev('.pop-reply-info').toggleClass('pop')
+    })
 
 
     var $fileField = $('#fileField')
@@ -303,6 +307,17 @@ $(function ($) {
         $self.parents('.preview-tag').remove()
         // tagCount++
         $tagsField.attr('disabled', false).attr('placeholder', '还能添加' + (tagCount - tagList.length >>> 0) + '个标签')
+    })
+
+    // 收藏
+    $collectTopic = $('#collect-topic')
+    $collectTopic.click(function () {
+        console.log('点击收藏')
+        var hasCollect = $(this).data('has-collect')
+        console.log('是否已经收藏此帖子: ' + hasCollect)
+        $.get('/topic/collect/' + JSON.parse($topicAuthorInfo.data('topic-user-id')), function (updateCollectRes) {
+            console.log('收藏topic返回数据: %O', updateCollectRes)
+        })
     })
 
 })

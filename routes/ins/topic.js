@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const topic = require('../../controllers').topicController
-const fileUpload = require('../../middlewaves').FileUpload
+const { _checkUserLogin = checkUserLogin, FileUpload } = require('../../middlewaves')
 
 const debug = require('debug')('my-app:routes:ins:topic')
 
@@ -12,7 +12,7 @@ router.use((req, res, next) => {
     next()
 })
 
-router.post('/test', fileUpload.single('newavatar'), (req, res) =>{
+router.post('/test', FileUpload.single('newavatar'), (req, res) => {
     req.test = '呵呵'
     debug('/test 查看 %O', req.test)
     debug('FileName: %s', req.coverImageName)
@@ -32,9 +32,15 @@ router.get('/test1', (req, res) => {
 
 router.get('/post', topic.showPost)
 
-router.post('/post', checkUserLogin, fileUpload.single('file'), topic.save)
+router.post('/post', checkUserLogin, FileUpload.single('file'), topic.save)
 
 router.get('/list', topic.list)
+
+router.use('/collect', _checkUserLogin)
+
+router.get('/collect/:tid', topic.collect)
+
+router.get('/collect/cancel/:tid', topic.cancelCollect)
 
 router.get('/:tid', topic.findById)
 

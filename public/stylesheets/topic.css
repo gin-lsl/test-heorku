@@ -202,11 +202,16 @@ textarea {
   padding-right: 7px;
 }
 
+.show-pop {
+  position: relative;
+}
+
 .pop-reply-info {
   display: none;
-  position: fixed;
+  position: absolute;
   width: 300px;
   min-height: 60px;
+  top: 25px;
   z-index: 10;
   background-color: white;
   box-shadow: 1px 1px 1px 1px grey;

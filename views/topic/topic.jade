@@ -15,6 +15,14 @@ block content
     h2= title
     p
       span.post_time 发布时间: #{topic.shortPostDateTime}
+      - var hasCollect = false
+      - if (currentUser && Array.isArray(currentUser.collections))
+        each _collection in currentUser.collections
+          - if (_collection == topic.id)
+            - hasCollect = true
+      span#collect-topic.ml-15.glyphicon(class=hasCollect ? 'glyphicon-star' : 'glyphicon-star-empty',
+        data-has-collect=hasCollect ? 'true' : 'false'
+        role='button')= hasCollect ? '已收藏' : '收藏'
     .topic-content
       .mv-20!= topic.content
     .comments-container
@@ -103,8 +111,8 @@ block content
                 - }
               - else {
                 button#btn-follow-author.btn.btn-info.pull-right(data-has-follow='false'
-                  disabled=currentUser.id == _author.id
-                  title=currentUser.id == _author.id ? '不能关注自己' : '') 关注作者
+                  disabled
+                  title='请登录') 关注作者
               - }
                 div
                   a(href='/user/#{_author.id}')
