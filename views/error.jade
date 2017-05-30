@@ -1,6 +1,17 @@
 extends layout
 
+block js
+  script(src='/javascripts/error.js')
+
 block content
-  h1= message
+  .bad-page
+    .big-text Opoos！页面找不到了......
+    span.time-longer
+    span 秒钟后自动跳转到
+    a(href="/") 首页
+    a#cancel.btn.btn-secondary(role=button) 取消
+  main.bad-page
+    img(src="/images/404.jpg", alt="404")
+  h2= message
   h2= error
   //- pre #{error.stack}

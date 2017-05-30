@@ -202,3 +202,27 @@ ul {
 #category-list li:hover {
   background-color: #E6E6E6;
 }
+
+/* 404 page */
+main.bad-page {
+  display: flex;
+  justify-content: center;
+}
+
+main.bad-page img {
+  --t-width: 85vw;
+  width: 85vw;
+  max-width: 465px;
+  height: calc(var(--t-width * 1.1));
+  max-height: 512px;
+}
+
+div.bad-page {
+  font-family: '微软雅黑', serif;
+  text-align: center;
+}
+
+.big-text {
+  white-space: nowrap;
+  font-size: 7vw;
+}
