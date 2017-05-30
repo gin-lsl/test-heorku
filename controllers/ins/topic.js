@@ -190,25 +190,32 @@ module.exports.findById = (req, res) => {
  * @param {Response} res
  */
 module.exports.collect = (req, res) => {
+    debug('打印当前用户: %O', req.session.user)
     debug('进入处理器 收藏帖子')
     UserProxy.collectOrCancel(req.session.user.id, req.params.tid, true, (err, collectRes) => {
         debug('数据处理结束，返回结果 Err: %O, collectRes: %O', err, collectRes)
-        return res.json({
-            success: !err,
-            data: collectRes
+        // 需要更新当前已登录用户的信息
+        UserProxy.findUserByIdAndReturnSafeFields(req.session.user.id, (updateCurrentUserInfoErr, updateCurrentUserRes) => {
+            debug('更新当前用户信息 updateCurrentUserInfoErr: %O, updateCurrentUserRes: %O', updateCurrentUserInfoErr, updateCurrentUserRes)
+            if (updateCurrentUserInfoErr) {
+                // return res.json({
+                //     success: !err,
+                //     data: collectRes
+                // })
+                return res.json({
+                    success: true,
+                    data: collectRes,
+                    message: '收藏成功，但是由于未知问题，数据没有更新，请尝试重新登录'
+                })
+            } else {
+                req.session.user = updateCurrentUserRes
+                return res.json({
+                    success: true,
+                    data: collectRes
+                })
+            }
         })
     })
-    // UserModel.findByIdAndUpdate(req.session.user.id, {
-    //     $push: {
-    //         collections: req.params.tid
-    //     }
-    // }, (err, updateCollectionsRes) => {
-    //     debug('收藏帖子返回结果: %O', updateCollectionsRes)
-    //     return res.json({
-    //         success: !err,
-    //         data: updateCollectionsRes
-    //     })
-    // })
 }
 
 
@@ -221,10 +228,78 @@ module.exports.cancelCollect = (req, res) => {
     debug('进入处理器 取消收藏')
     UserProxy.collectOrCancel(req.session.user.id, req.params.tid, false, (err, cancelRes) => {
         debug('数据处理结束，返回结果 Err: %O, cancelRes: %O', err, cancelRes)
-        return res.json({
-            success: !err,
-            data: cancelRes
+        UserProxy.findUserByIdAndReturnSafeFields(req.session.user.id, (updateCurrentUserInfoErr, updateCurrentUserRes) => {
+            if (updateCurrentUserInfoErr) {
+                return res.json({
+                    success: true,
+                    data: cancelRes,
+                    message: '取消收藏成功，但是由于未知原因，数据没有更新，请尝试重新登录'
+                })
+            } else {
+                req.session.user = updateCurrentUserRes
+                return res.json({
+                    success: true,
+                    data: cancelRes
+                })
+            }
         })
+        // return res.json({
+        //     success: !err,
+        //     data: cancelRes
+        // })
+    })
+}
+
+
+/**
+ * 更新当前已登录用户的信息
+ * 
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.updateCurrentUserInfo = (req, res) => {
+    _updateCurrentUserInfo(req, (err) => {
+        if (err) {
+            // if (err.type == 0) {
+            // 虽然知道了这些，但是现在也并没有什么用呢。。
+            // } else if (err.type == 1) {
+            // }
+            return res.json({
+                success: false,
+                data: '发生错误'
+            })
+        } else {
+            return res.json({
+                success: true,
+                data: '更新成功'
+            })
+        }
+    })
+}
+
+
+/**
+ * 更新当前已登录用户信息
+ *
+ * 回调参数为 Error对象，表示失败。含有 type 属性：
+ *
+ * 0 => 没有登录
+ *
+ * 1 => 更新失败
+ *
+ * @param {Request} req 
+ * @param {function(Error)} callback 只有一个 Error 对象，表示更新当前登录用户信息失败
+ */
+function _updateCurrentUserInfo(req, callback) {
+    if (!req.session.user) {
+        return callback(new Error('没有登录').type = 0)
+    }
+    UserProxy.findUserByIdAndReturnSafeFields(req.session.user.id, (findUserByIdErr, findUserByIdRes) => {
+        if (findUserByIdErr) {
+            return callback(new Error('更新用户数据失败').type = 1)
+        }
+        req.session.user = findUserByIdRes
+        return callback(null)
     })
 }
 

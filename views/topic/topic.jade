@@ -17,6 +17,8 @@ block content
       span.post_time 发布时间: #{topic.shortPostDateTime}
       - var hasCollect = false
       - if (currentUser && Array.isArray(currentUser.collections))
+        span='collections: ' + currentUser.collections
+        span=' topicid: ' + topic.id
         each _collection in currentUser.collections
           - if (_collection == topic.id)
             - hasCollect = true

@@ -100,7 +100,8 @@ module.exports.findUserByIdAndReturnSafeFields = (userId, callback) => {
             logonDateTime: findUserInfoRes.logonDateTime,
             visit: findUserInfoRes.visit,
             recentVisits: findUserInfoRes.recentVisits,
-            follows: findUserInfoRes.follows
+            follows: findUserInfoRes.follows,
+            collections: findUserInfoRes.collections
         })
     })
 }

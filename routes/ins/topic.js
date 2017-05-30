@@ -9,6 +9,7 @@ const debug = require('debug')('my-app:routes:ins:topic')
  */
 router.use((req, res, next) => {
     debug('进入路由 /topic')
+    debug('打印已登录用户信息: %O', req.session.user ? req.session.user : '没有用户登录')
     next()
 })
 
@@ -43,6 +44,8 @@ router.get('/collect/:tid', topic.collect)
 router.get('/collect/cancel/:tid', topic.cancelCollect)
 
 router.get('/count', topic.count)
+
+router.get('/update/user', topic.updateCurrentUserInfo)
 
 router.get('/:tid', topic.findById)
 

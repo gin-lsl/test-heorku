@@ -146,9 +146,6 @@ $(function ($) {
             })
         }
     })
-    //         }
-    //     })
-    // }
 
     $('.comment-reply-btn').click(function () {
         var $forSection = $(this).parents('section')
@@ -158,6 +155,8 @@ $(function ($) {
         // .reply-to-user
         $('#reply-to-user-name').text(username)
         $('.reply-to-user-ready').addClass('reply-to-user')
+        var pathname = location.pathname
+        location.href = pathname + '#comment'
     })
 
     $('#reply-to-user-close').click(function () {
@@ -314,10 +313,25 @@ $(function ($) {
     $collectTopic.click(function () {
         console.log('点击收藏')
         var hasCollect = $(this).data('has-collect')
+        console.log('hasCollect: ' + hasCollect)
         console.log('是否已经收藏此帖子: ' + hasCollect)
-        $.get('/topic/collect/' + JSON.parse($topicAuthorInfo.data('topic-user-id')), function (updateCollectRes) {
-            console.log('收藏topic返回数据: %O', updateCollectRes)
-        })
+        if (hasCollect) {
+            console.log('取消收藏请求')
+            $.get('/topic/collect/cancel/' + $replyTopicId.val(), function (updateCancelCollectRes) {
+                console.log('取消收藏结果: %O', updateCancelCollectRes)
+                if (updateCancelCollectRes.success) {
+                    $collectTopic.removeClass('glyphicon-star').addClass('glyphicon-star-empty').data('has-collect', false).text('收藏').attr('title', '点击收藏')
+                }
+            })
+        } else {
+            console.log('收藏请求')
+            $.get('/topic/collect/' + $replyTopicId.val(), function (updateCollectRes) {
+                console.log('收藏topic返回数据: %O', updateCollectRes)
+                if (updateCollectRes) {
+                    $collectTopic.removeClass('glyphicon-star-empty').addClass('glyphicon-star').data('has-collect', true).text('已收藏').attr('title', '点击取消收藏')
+                }
+            })
+        }
     })
 
 })
