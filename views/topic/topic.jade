@@ -54,7 +54,7 @@ block content
                data-delay='{ show: 0, hide: 2000 }') 发布评论
       .comments-list
         each reply in replies
-          section.comments-item.pv-15.clearfix(data-id=reply._id, data-reply-info=reply)
+          section.comments-item.pv-15.clearfix(data-id=reply._id.toString(), data-reply-info=reply)
             .pull-left
               a(href='/user/#{reply.userId}')
               - if (reply.user)
