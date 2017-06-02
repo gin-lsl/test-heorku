@@ -111,6 +111,7 @@ module.exports.list = (req, res) => {
                     }
                 })
             }
+            debug('当前登录对象: %O', req.session.user)
             render(err, 'topic/topics-list', {
                 topics: topics,
                 title: '全部帖子',

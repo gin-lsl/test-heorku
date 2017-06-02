@@ -23,6 +23,12 @@ router.post('/login', userController.login)
 
 router.get('/logout', userController.logout)
 
+router.get('/active_account', userController.activeAccount)
+
+router.get('/logon_result', (req, res) => {
+    res.render('log/activeAccountResult')
+})
+
 router.get('/all_test', (req, res) => {
     debug('%O', res.locals)
     debug('req: %O', req.obj)

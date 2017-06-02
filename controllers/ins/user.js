@@ -1,8 +1,11 @@
 const { UserModel } = require('../../models')
 const { UserProxy, TopicProxy, ReplyProxy } = require('../../proxy')
 const regex_tools = require('../../utils').regex_tools
+const mail = require('../../utils').mail
+const jsonwebtoken = require('jsonwebtoken')
 const gravatar = require('gravatar')
 const fs = require('fs')
+const jwtSecret = require('../../configs/credentials').jwtSecret
 const debug = require('debug')('my-app:controllers:ins:user')
 
 /**
@@ -54,32 +57,82 @@ module.exports.logon = (req, res) => {
 
     UserProxy.findOneByEmail(email, (err, _user) => {
         if (err) {
+            debug('发生未知错误, 请稍后重试 %O', err)
             return resJson(res, { type: 0, msg: '发生未知错误, 请稍后重试' })
         }
         if (_user) {
+            debug('此邮箱已被注册: %O', _user)
             return resJson(res, { type: 1, msg: '此邮箱已被注册' })
         }
-        UserProxy.createNewUserPromise(email, password).then(_dataCreateUserWhenLogon => {
-            let __user = {
-                id: _dataCreateUserWhenLogon._id,
-                lv: _dataCreateUserWhenLogon.lv,
-                say: _dataCreateUserWhenLogon.say,
-                name: _dataCreateUserWhenLogon.name,
-                email: _dataCreateUserWhenLogon.email,
-                gender: _dataCreateUserWhenLogon.gender,
-                avatar: _dataCreateUserWhenLogon.avatar,
-                follows: _dataCreateUserWhenLogon.follows,
-                hisFollows: _dataCreateUserWhenLogon.hisFollows,
-                collections: _dataCreateUserWhenLogon.collections,
-                recentVisits: _dataCreateUserWhenLogon.recentVisits,
-                logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
-                lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
-            }
-            req.session.user = __user
-            debug('注册返回数据: %O', __user)
-            resJson(res, __user, true)
-        }).catch(uErr => resJson(res, '未知错误, 请稍后重试'))
+        UserProxy.createNewUserPromise(email, password)
+            .then(_dataCreateUserWhenLogon => {
+                // 这里先不添加session，等到激活账户之后再添加
+                // let __user = {
+                //     id: _dataCreateUserWhenLogon._id,
+                //     lv: _dataCreateUserWhenLogon.lv,
+                //     say: _dataCreateUserWhenLogon.say,
+                //     name: _dataCreateUserWhenLogon.name,
+                //     email: _dataCreateUserWhenLogon.email,
+                //     gender: _dataCreateUserWhenLogon.gender,
+                //     avatar: _dataCreateUserWhenLogon.avatar,
+                //     follows: _dataCreateUserWhenLogon.follows,
+                //     hisFollows: _dataCreateUserWhenLogon.hisFollows,
+                //     collections: _dataCreateUserWhenLogon.collections,
+                //     recentVisits: _dataCreateUserWhenLogon.recentVisits,
+                //     logonDateTime: _dataCreateUserWhenLogon.logonDateTime,
+                //     lastLoginDateTime: _dataCreateUserWhenLogon.lastLoginDateTime,
+                // }
+                // req.session.user = __user
+                debug('注册返回数据: %O', _dataCreateUserWhenLogon)
+                jsonwebtoken.sign({
+                    uid: _dataCreateUserWhenLogon._id,
+                    eml: _dataCreateUserWhenLogon.email
+                }, jwtSecret, (err, _resJWT) => {
+                    if (err) {
+                        // 如果发送邮件失败，把数据库中存储的用户信息删除。
+                        UserModel.findByIdAndRemove(_dataCreateUserWhenLogon, (_removeThisUserErr, _removeThisUserRes) => {
+                            resJson(res, { type: 0, msg: '注册失败，请稍后重试' }, false)
+                        })
+                    } else {
+                        mail.sendActiveMail(email, _resJWT, email)
+                        resJson(res, { msg: '我们给你填写的邮箱发送了一封邮件，请查收并点击邮箱中的链接以完成注册！' }, true)
+                    }
+                })
+            })
+            .catch(uErr => {
+                debug('真·未知错误 uErr: %O')
+                resJson(res, '未知错误, 请稍后重试')
+            })
         // return resJson(res, '注册成功', true)
+    })
+}
+
+
+/**
+ * 激活账户
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+module.exports.activeAccount = (req, res) => {
+    debug('进入激活验证处理器')
+    // 这里添加session
+    let _key = req.query.key
+    let _name = req.query.name
+    jsonwebtoken.verify(_key, jwtSecret, (jwtErr, jwtDecoded) => {
+        debug('解析token的内容 Err: %O, payload: %O', jwtErr, jwtDecoded)
+        UserProxy.findUserByIdAndReturnSafeFields(jwtDecoded.uid, (findUserErr, findUserRes) => {
+            debug('完成账户注册---------------------- findUserRes: %O', findUserRes)
+            if (findUserErr) {
+                return resJson(res, { type: 0, msg: '发生错误，注册账户失败' }, false)
+            }
+            req.session.user = findUserRes
+            // res.json({
+            //     success: !jwtErr,
+            //     data: jwtErr || jwtDecoded
+            // })
+            res.redirect('/')
+        })
     })
 }
 

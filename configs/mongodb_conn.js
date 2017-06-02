@@ -14,11 +14,16 @@ module.exports = function () {
         }
     }
 
-    // 根据不同的环境变量链接 mongodb    
+    // 使用 Promise
+    mongoose.Promise = global.Promise
+
+    // 根据不同的环境变量链接 mongodb
     switch (process.env.env) {
         case 'development':
             debug('开发模式')
             mongoose.connect(mongoConfig.development.connectionString)
+            // 设置 mongoose 打印执行的语句
+            // mongoose.set('debug', true)
             break
         case 'production':
             debug('产品模式')

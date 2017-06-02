@@ -56,22 +56,32 @@ module.exports.findOneByEmail = (email, callback) => UserModel.findOne({ email: 
  * @return {Promise}
  */
 module.exports.createNewUserPromise = (email, password) => {
+    debug('进入proxy的创建方法')
     let salt = getRandomString()
     salt = crypto.createHash('sha1').update(HASH_SECRET).update(getRandomString()).digest('hex')
     password = crypto.createHash('sha1').update(salt).update(password).digest('hex')
     let now = new Date()
-    return UserModel.create({
-        email: email,
-        password: password,
-        name: email,
-        avatar: gravatar.url(email),
-        logonDateTime: now,
-        lastLoginDateTime: now,
-        salt: salt,
-        lv: 1,
-        follows: [],
-        hisFollows: [],
-        recentVisits: [],
+    return new Promise((resolve, reject) => {
+        UserModel.create({
+            email: email,
+            password: password,
+            name: email,
+            avatar: gravatar.url(email),
+            logonDateTime: now,
+            lastLoginDateTime: now,
+            salt: salt,
+            lv: 1,
+            follows: [],
+            hisFollows: [],
+            recentVisits: [],
+        })
+            .then(createSuccess => {
+                debug('成功： %O', createSuccess)
+                return resolve(createSuccess)
+            }, createFalid => {
+                debug('失败： %O', createFalid)
+                return reject(createFalid)
+            })
     })
 }
 
@@ -101,6 +111,7 @@ module.exports.findUserByIdAndReturnSafeFields = (userId, callback) => {
             visit: findUserInfoRes.visit,
             recentVisits: findUserInfoRes.recentVisits,
             follows: findUserInfoRes.follows,
+            hisFollows: findUserInfoRes.hisFollows,
             collections: findUserInfoRes.collections
         })
     })

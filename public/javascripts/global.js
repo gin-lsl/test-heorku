@@ -225,7 +225,9 @@ $(function ($) {
             if (logonResponse.success) {
                 // 注冊成功
                 resetLogonErrorEmpty()
-                window.location.reload()
+                // alert(logonResponse.data.msg)
+                // window.location.reload()
+                window.location.href = '/logon_result'
             } else {
                 var _ = logonResponse.data
                 switch (_.type) {

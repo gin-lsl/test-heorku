@@ -21,7 +21,6 @@ router.post('/update/name', userController.findByIdAndUpdateName)
 
 router.post('/update/say', userController.findByIdAndUpdateSay)
 
-
 router.get('/replies/:id', userController.findAllReplies)
 
 router.get('/topics/:id', userController.findAllTopics)
