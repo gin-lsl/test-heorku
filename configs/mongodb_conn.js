@@ -23,7 +23,7 @@ module.exports = function () {
             debug('开发模式')
             mongoose.connect(mongoConfig.development.connectionString)
             // 设置 mongoose 打印执行的语句
-            // mongoose.set('debug', true)
+            mongoose.set('debug', true)
             break
         case 'production':
             debug('产品模式')
