@@ -29,77 +29,81 @@ footer {
 }
 
 .mt-5 {
-  margin-top: 5px!important;
+  margin-top: 5px;
 }
 
 .mt-30 {
-  margin-top: 30px!important;
+  margin-top: 30px;
 }
 
 .ml-0 {
-  margin-left: 0px!important;
+  margin-left: 0px;
 }
 
 .ml-15 {
-  margin-left: 15px!important;
+  margin-left: 15px;
 }
 
 .ml-60 {
-  margin-left: 60px!important;
+  margin-left: 60px;
 }
 
 .mb-10 {
-  margin-bottom: 10px!important;
+  margin-bottom: 10px;
 }
 
 .mv-20 {
-  margin-top: 20px!important;
-  margin-bottom: 20px!important;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .m-0 {
-  margin: 0px!important;
+  margin: 0px;
 }
 
 .m-5 {
-  margin: 5px!important;
+  margin: 5px;
 }
 
 .pt-20 {
-  padding-top: 20px!important;
+  padding-top: 20px;
 }
 
 .pt-40 {
-  padding-top: 40px!important;
+  padding-top: 40px;
 }
 
 .pr-20 {
-  padding-right: 20px!important;
+  padding-right: 20px;
 }
 
 .pl-45 {
-  padding-left: 45px!important;
+  padding-left: 45px;
 }
 
 .pl-60 {
-  padding-left: 60px!important;
+  padding-left: 60px;
 }
 
 .pv-15 {
-  padding-top: 15px!important;
-  padding-bottom: 15px!important;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 .p-20 {
-  padding: 20px!important;
+  padding: 20px;
 }
 
 .p-10 {
-  padding: 10px!important;
+  padding: 10px;
 }
 
 .w100 {
   width: 100%;
+}
+
+.no-outline {
+  outline: none!important;
 }
 
 .modal-dialog {

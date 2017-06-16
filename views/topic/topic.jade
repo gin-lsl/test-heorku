@@ -17,8 +17,6 @@ block content
       span.post_time 发布时间: #{topic.shortPostDateTime}
       - var hasCollect = false
       - if (currentUser && Array.isArray(currentUser.collections))
-        span='collections: ' + currentUser.collections
-        span=' topicid: ' + topic.id
         each _collection in currentUser.collections
           - if (_collection == topic.id)
             - hasCollect = true
@@ -28,7 +26,7 @@ block content
     .topic-content
       .mv-20!= topic.content
     .comments-container
-      a#comment
+      a#comment                                  
       .comments-box
         .pull-left
           //- TODO 这里需要修改, 头像数据稍后在加载

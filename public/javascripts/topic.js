@@ -309,7 +309,7 @@ $(function ($) {
     })
 
     // 收藏
-    $collectTopic = $('#collect-topic')
+    var $collectTopic = $('#collect-topic')
     $collectTopic.click(function () {
         console.log('点击收藏')
         var hasCollect = $(this).data('has-collect')
@@ -321,14 +321,18 @@ $(function ($) {
                 console.log('取消收藏结果: %O', updateCancelCollectRes)
                 if (updateCancelCollectRes.success) {
                     $collectTopic.removeClass('glyphicon-star').addClass('glyphicon-star-empty').data('has-collect', false).text('收藏').attr('title', '点击收藏')
+                } else {
+                    $.openLoginPane()
                 }
             })
         } else {
             console.log('收藏请求')
             $.get('/topic/collect/' + $replyTopicId.val(), function (updateCollectRes) {
                 console.log('收藏topic返回数据: %O', updateCollectRes)
-                if (updateCollectRes) {
+                if (updateCollectRes.success) {
                     $collectTopic.removeClass('glyphicon-star-empty').addClass('glyphicon-star').data('has-collect', true).text('已收藏').attr('title', '点击取消收藏')
+                } else {
+                    $.openLoginPane()
                 }
             })
         }

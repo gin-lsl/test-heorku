@@ -329,4 +329,10 @@ $(function ($) {
         }
         $pagination.children('.prev').after(_paginationLis)
     })
+
+    $.hasUserLogin = hasUserLogin
+    $.hasUserLogout = hasUserLogout
+    $.openLoginPane = function () {
+        $('#loginModal').modal('toggle')
+    }
 })
